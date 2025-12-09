@@ -15,7 +15,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
-@RequiredArgsConstructor
 @Component
 @Slf4j
 public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<AuthorizationHeaderFilter.Config> {
@@ -23,10 +22,17 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
     private final JwtUtil jwtUtil;
     private final GatewayRedisUtil redisUtil;
 
-    public static class Config {}
-
     @Value("${internal.secret-key}")
     private String internalSecretKey;
+
+    // ⭕ 생성자를 직접 만들고, super(Config.class)를 꼭 호출해야 합니다!
+    public AuthorizationHeaderFilter(JwtUtil jwtUtil, GatewayRedisUtil redisUtil) {
+        super(Config.class); // ⭐ 핵심: 부모에게 "내 설정 클래스는 Config야"라고 알려줌
+        this.jwtUtil = jwtUtil;
+        this.redisUtil = redisUtil;
+    }
+
+    public static class Config { }
 
     @Override
     public GatewayFilter apply(Config config) {

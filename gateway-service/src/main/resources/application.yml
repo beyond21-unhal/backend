@@ -3,7 +3,24 @@ spring:
     name: gateway-service
   profiles:
     active: dev
+  cloud:
+    gateway:
+      server:
+        webflux:
+          routes:
+            - id: member-service
+              uri: lb://MEMBER-SERVICE
+              predicates:
+                - Path=/api/v1/member-service/auth/**
+              filters:
+                - RewritePath=/api/v1/user-service/(?<segment>.*), /$\{segment}
 
+            - id: member-service
+              uri: lb://MEMBER-SERVICE
+              predicates:
+                - Path=/api/v1/member-service/member/**
+              filters:
+                - AuthorizationHeaderFilter
 eureka:
   client:
     fetch-registry: true
@@ -12,3 +29,4 @@ eureka:
 springdoc:
   swagger-ui:
     path: /swagger
+
