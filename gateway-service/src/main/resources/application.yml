@@ -8,3 +8,7 @@ eureka:
   client:
     fetch-registry: true
     register-with-eureka: true
+
+springdoc:
+  swagger-ui:
+    path: /swagger
