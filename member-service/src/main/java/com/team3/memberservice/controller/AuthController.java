@@ -26,7 +26,7 @@ public class AuthController {
         return ResponseEntity.status(HttpStatus.CREATED).body(authService.createUser(signupDTO));
     }
 
-    @PostMapping()
+    @PostMapping("login")
     @Operation(summary = "로그인")
     public ResponseEntity<ApiResponse<?>> login(@RequestBody LoginDTO loginDTO) {
         return ResponseEntity.ok(authService.login(loginDTO));
