@@ -3,32 +3,8 @@ spring:
     name: gateway-service
   profiles:
     active: dev
-  cloud:
-    gateway:
-      server:
-        webflux:
-          routes:
-            - id: member-docs
-              uri: lb://MEMBER-SERVICE
-              predicates:
-                - Path=/api/v1/member-service/v3/api-docs/**
-              filters:
-                - RewritePath=/api/v1/member-service/(?<segment>.*), /$\{segment}
 
-            - id: member-auth
-              uri: lb://MEMBER-SERVICE
-              predicates:
-                - Path=/api/v1/member-service/auth/**
-              filters:
-                - RewritePath=/api/v1/member-service/(?<segment>.*), /$\{segment}
 
-            - id: member-info
-              uri: lb://MEMBER-SERVICE
-              predicates:
-                - Path=/api/v1/member-service/member/**
-              filters:
-                - AuthorizationHeaderFilter
-                - RewritePath=/api/v1/member-service/(?<segment>.*), /$\{segment}
 eureka:
   client:
     fetch-registry: true
