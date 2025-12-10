@@ -1,6 +1,7 @@
 package com.team3.statsservice.service;
 
 import com.team3.statsservice.domian.Stats;
+import com.team3.statsservice.dto.response.CalorieRankingDto;
 import com.team3.statsservice.dto.response.TimeRankingDto;
 import com.team3.statsservice.repository.StatsRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -94,5 +96,98 @@ class StatsServiceTest {
         assertEquals(user1, ranking.get(2).userId());
         assertEquals(3, ranking.get(2).timeRank());
         assertEquals(30, ranking.get(2).totalDuration());
+    }
+
+    @DisplayName("지난 주 칼로리 소모량 랭킹 조회 테스트")
+    @Test
+    void getLastWeekCalorieRanking() {
+        // given
+        Long user1 = 1L;
+        Long user2 = 2L;
+        Long user3 = 3L;
+
+        statsService.createLastWeekStats(user1, 30, 300);
+        statsService.createLastWeekStats(user2, 60, 500);
+        statsService.createLastWeekStats(user3, 45, 400);
+
+        // when
+        List<CalorieRankingDto> ranking = statsService.getLastWeekCalorieRanking();
+
+        // then
+        assertEquals(3, ranking.size());
+
+        assertEquals(user2, ranking.get(0).userId());
+        assertEquals(1, ranking.get(0).calorieRank());
+        assertEquals(500, ranking.get(0).totalCalories());
+
+        assertEquals(user3, ranking.get(1).userId());
+        assertEquals(2, ranking.get(1).calorieRank());
+        assertEquals(400, ranking.get(1).totalCalories());
+
+        assertEquals(user1, ranking.get(2).userId());
+        assertEquals(3, ranking.get(2).calorieRank());
+        assertEquals(300, ranking.get(2).totalCalories());
+    }
+
+    @DisplayName("날짜 검색을 통한 운동량 랭킹 조회 테스트")
+    @Test
+    void getTimeRankingByDate() {
+        // given
+        Long user1 = 1L;
+        Long user2 = 2L;
+        Long user3 = 3L;
+
+        statsService.createLastWeekStats(user1, 30, 300);
+        statsService.createLastWeekStats(user2, 60, 500);
+        statsService.createLastWeekStats(user3, 45, 400);
+
+        // when
+        List<TimeRankingDto> ranking = statsService.getTimeRankingByDate(LocalDate.now().minusDays(7));
+
+        // then
+        assertEquals(3, ranking.size());
+
+        assertEquals(user2, ranking.get(0).userId());
+        assertEquals(1, ranking.get(0).timeRank());
+        assertEquals(60, ranking.get(0).totalDuration());
+
+        assertEquals(user3, ranking.get(1).userId());
+        assertEquals(2, ranking.get(1).timeRank());
+        assertEquals(45, ranking.get(1).totalDuration());
+
+        assertEquals(user1, ranking.get(2).userId());
+        assertEquals(3, ranking.get(2).timeRank());
+        assertEquals(30, ranking.get(2).totalDuration());
+    }
+
+    @DisplayName("날짜 검색을 통한 칼로리 소모량 랭킹 조회 테스트")
+    @Test
+    void getCalorieRankingByDate() {
+        // given
+        Long user1 = 1L;
+        Long user2 = 2L;
+        Long user3 = 3L;
+
+        statsService.createLastWeekStats(user1, 30, 300);
+        statsService.createLastWeekStats(user2, 60, 500);
+        statsService.createLastWeekStats(user3, 45, 400);
+
+        // when
+        List<CalorieRankingDto> ranking = statsService.getCalorieRankingByDate(LocalDate.now().minusDays(7));
+
+        // then
+        assertEquals(3, ranking.size());
+
+        assertEquals(user2, ranking.get(0).userId());
+        assertEquals(1, ranking.get(0).calorieRank());
+        assertEquals(500, ranking.get(0).totalCalories());
+
+        assertEquals(user3, ranking.get(1).userId());
+        assertEquals(2, ranking.get(1).calorieRank());
+        assertEquals(400, ranking.get(1).totalCalories());
+
+        assertEquals(user1, ranking.get(2).userId());
+        assertEquals(3, ranking.get(2).calorieRank());
+        assertEquals(300, ranking.get(2).totalCalories());
     }
 }
