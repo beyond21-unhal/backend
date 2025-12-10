@@ -56,7 +56,6 @@ public class ReportService {
         reportRepository.deleteByUserIdAndReportId(userId, reportId);
     }
 
-
     private LocalDate getLastWeekStart() { // 월요일 시작, 일요일 끝
         LocalDate today = LocalDate.now();
         LocalDate thisWeekMonday = today.with(DayOfWeek.MONDAY);
