@@ -41,4 +41,15 @@ public class ReportController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(reportService.getReportByDate(userId, date));
     }
+
+    @DeleteMapping("/{userId}/{reportId}")
+    @Operation(summary = "리포트 삭제 API입니다.")
+    public ResponseEntity<String> deleteReport(
+            @PathVariable("userId") Long userId,
+            @PathVariable("reportId") Long reportId
+    ) {
+        reportService.deleteReportById(userId, reportId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                .body("리포트가 삭제되었습니다.");
+    }
 }

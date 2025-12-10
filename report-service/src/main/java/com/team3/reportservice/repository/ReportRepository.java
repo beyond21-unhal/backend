@@ -12,5 +12,7 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
 
     Report findByUserIdAndStartDateLessThanEqualAndEndDateGreaterThanEqual(Long userId, LocalDate startDate, LocalDate endDate);
 
+    void deleteByUserIdAndReportId(Long userId, Long reportId);
+
     boolean existsByUserIdAndStartDate(Long userId, LocalDate startDate);
 }

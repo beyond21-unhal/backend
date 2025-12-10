@@ -51,6 +51,12 @@ public class ReportService {
         return reportRepository.findByUserIdAndStartDateLessThanEqualAndEndDateGreaterThanEqual(userId, date, date);
     }
 
+    @Transactional
+    public void deleteReportById(Long userId, Long reportId) {
+        reportRepository.deleteByUserIdAndReportId(userId, reportId);
+    }
+
+
     private LocalDate getLastWeekStart() { // 월요일 시작, 일요일 끝
         LocalDate today = LocalDate.now();
         LocalDate thisWeekMonday = today.with(DayOfWeek.MONDAY);
