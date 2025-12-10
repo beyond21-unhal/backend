@@ -1,6 +1,7 @@
 package com.team3.reportservice.service;
 
 import com.team3.reportservice.domain.Report;
+import com.team3.reportservice.dto.response.ReportViewDTO;
 import com.team3.reportservice.repository.ReportRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -62,11 +63,18 @@ class ReportServiceTest {
         reportService.createLastWeekReport(userId, plannedAmount, achievedAmount);
 
         // when
-        List<Report> reports = reportService.getReportsByUserId(userId);
+        List<ReportViewDTO> reports = reportService.getReportsByUserId(userId);
 
         // then
         assertFalse(reports.isEmpty(), "해당 아이디의 리포트가 존재하지 않습니다.");
-        assertEquals(userId, reports.get(0).getUserId());
+
+        ReportViewDTO first = reports.get(0);
+
+        assertNotNull(first.startDate());
+        assertNotNull(first.endDate());
+        assertEquals(plannedAmount, first.plannedAmount());
+        assertEquals(achievedAmount, first.achievedAmount());
+        assertEquals(plannedAmount - achievedAmount, first.resultValue());
     }
 
     @DisplayName("날짜 검색을 통한 리포트 조회")
@@ -94,13 +102,15 @@ class ReportServiceTest {
         LocalDate searchDate = lastWeekStart.plusDays(3);
 
         // when
-        Report foundReport = reportService.getReportByDate(userId, searchDate);
+        ReportViewDTO foundReport = reportService.getReportByDate(userId, searchDate);
 
         // then
         assertNotNull(foundReport);
-        assertEquals(userId, foundReport.getUserId());
-        assertEquals(lastWeekStart, foundReport.getStartDate());
-        assertEquals(lastWeekEnd, foundReport.getEndDate());
+        assertEquals(lastWeekStart, foundReport.startDate());
+        assertEquals(lastWeekEnd, foundReport.endDate());
+        assertEquals(1000, foundReport.plannedAmount());
+        assertEquals(800, foundReport.achievedAmount());
+        assertEquals(200, foundReport.resultValue());
     }
 
     @DisplayName("리포트 삭제")

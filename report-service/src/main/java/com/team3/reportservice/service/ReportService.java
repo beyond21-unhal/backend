@@ -1,6 +1,7 @@
 package com.team3.reportservice.service;
 
 import com.team3.reportservice.domain.Report;
+import com.team3.reportservice.dto.response.ReportViewDTO;
 import com.team3.reportservice.repository.ReportRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -44,11 +45,11 @@ public class ReportService {
         reportRepository.save(report);
     }
 
-    public List<Report> getReportsByUserId(Long userId) {
+    public List<ReportViewDTO> getReportsByUserId(Long userId) {
         return reportRepository.findByUserId(userId);
     }
 
-    public Report getReportByDate(Long userId, LocalDate date) {
+    public ReportViewDTO getReportByDate(Long userId, LocalDate date) {
         return reportRepository.findByUserIdAndStartDateLessThanEqualAndEndDateGreaterThanEqual(userId, date, date);
     }
 
