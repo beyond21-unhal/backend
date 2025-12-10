@@ -1,7 +1,7 @@
 package com.team3.feedservice.service;
 
 
-import com.team3.feedservice.domain.Image2;
+import com.team3.feedservice.domain.FeedImage;
 import com.team3.feedservice.repository.ImageRepository;
 import io.minio.*;
 import io.minio.errors.*;
@@ -66,7 +66,7 @@ public class MinioFileService {
         String fullUrl = url + "/" + BUCKET_NAME + "/" + objectName;
 
         imageRepository.save(
-                Image2.builder()
+                FeedImage.builder()
                         .originalFileName(multipartFile.getOriginalFilename())
                         .fileName(fileName)
                         .fileContent(fullUrl)

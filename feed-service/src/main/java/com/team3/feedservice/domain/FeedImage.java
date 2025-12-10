@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Image2 {
+public class FeedImage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -24,7 +24,7 @@ public class Image2 {
     private String fileContent;
 
     @Builder
-    public Image2(String originalFileName, String fileName, String fileContent) {
+    public FeedImage(String originalFileName, String fileName, String fileContent) {
         this.originalFileName = originalFileName;
         this.fileName = fileName;
         this.fileContent = fileContent;
