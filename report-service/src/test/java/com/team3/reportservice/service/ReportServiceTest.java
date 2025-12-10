@@ -8,6 +8,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -45,5 +49,57 @@ class ReportServiceTest {
         assertEquals(plannedAmount - achievedAmount, report.getResultValue());
         assertNotNull(report.getStartDate());
         assertNotNull(report.getEndDate());
+    }
+
+    @DisplayName("사용자별 전체 리포트 조회")
+    @Test
+    void getReportsByUserId() {
+        // given
+        Long userId = 1L;
+        Integer plannedAmount = 1000;
+        Integer achievedAmount = 800;
+
+        reportService.createLastWeekReport(userId, plannedAmount, achievedAmount);
+
+        // when
+        List<Report> reports = reportService.getReportsByUserId(userId);
+
+        // then
+        assertFalse(reports.isEmpty(), "해당 아이디의 리포트가 존재하지 않습니다.");
+        assertEquals(userId, reports.get(0).getUserId());
+    }
+
+    @DisplayName("날짜 검색을 통한 리포트 조회")
+    @Test
+    void getReportByDate() {
+        // given
+        Long userId = 1L;
+
+        LocalDate lastWeekStart = LocalDate.now()
+                .minusWeeks(1)
+                .with(DayOfWeek.MONDAY);
+        LocalDate lastWeekEnd = lastWeekStart.plusDays(6);
+
+        Report report = Report.builder()
+                .userId(userId)
+                .startDate(lastWeekStart)
+                .endDate(lastWeekEnd)
+                .plannedAmount(1000)
+                .achievedAmount(800)
+                .resultValue(200)
+                .build();
+
+        reportRepository.save(report);
+
+        LocalDate searchDate = lastWeekStart.plusDays(3);
+
+        // when
+        Report foundReport = reportService.getReportByDate(userId, searchDate);
+
+        // then
+        assertNotNull(foundReport);
+        assertEquals(userId, foundReport.getUserId());
+        assertEquals(lastWeekStart, foundReport.getStartDate());
+        assertEquals(lastWeekEnd, foundReport.getEndDate());
     }
 }
