@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+
 @RestController
 @RequestMapping("/stats")
 @RequiredArgsConstructor
@@ -53,5 +55,21 @@ public class StatsController {
     public ResponseEntity<?> viewLastWeekCalorieRanking() {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(statsService.getLastWeekCalorieRanking());
+    }
+
+    @GetMapping("/search-time-ranking/{date}")
+    @Operation(summary = "날짜 검색을 통한 운동량 랭킹 조회 API입니다.")
+    @SecurityRequirement(name = "JWT")
+    public ResponseEntity<?> viewTimeRankingByDate(@PathVariable("date") LocalDate date) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(statsService.getTimeRankingByDate(date));
+    }
+
+    @GetMapping("/search-calorie-ranking/{date}")
+    @Operation(summary = "날짜 검색을 통한 칼로리 소모량 랭킹 조회 API입니다.")
+    @SecurityRequirement(name = "JWT")
+    public ResponseEntity<?> viewCalorieRankingByDate(@PathVariable("date") LocalDate date) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(statsService.getCalorieRankingByDate(date));
     }
 }

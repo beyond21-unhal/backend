@@ -14,5 +14,9 @@ public interface StatsRepository extends JpaRepository<Stats, Long> {
 
     List<Stats> findByStartDateOrderByTotalCaloriesDesc(LocalDate startDate);
 
+    List<Stats> findByStartDateLessThanEqualAndEndDateGreaterThanEqualOrderByTotalDurationDesc(LocalDate startDate, LocalDate endDate);
+
+    List<Stats> findByStartDateLessThanEqualAndEndDateGreaterThanEqualOrderByTotalCaloriesDesc(LocalDate startDate, LocalDate endDate);
+
     boolean existsByUserIdAndStartDate(Long userId, LocalDate startDate);
 }

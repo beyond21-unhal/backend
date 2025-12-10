@@ -59,6 +59,18 @@ public class StatsService {
         return buildCalorieRanking(statsList);
     }
 
+    public List<TimeRankingDto> getTimeRankingByDate(LocalDate date) {
+        List<Stats> statsList = statsRepository.findByStartDateLessThanEqualAndEndDateGreaterThanEqualOrderByTotalDurationDesc(date, date);
+
+        return buildTimeRanking(statsList);
+    }
+
+    public List<CalorieRankingDto> getCalorieRankingByDate(LocalDate date) {
+        List<Stats> statsList = statsRepository.findByStartDateLessThanEqualAndEndDateGreaterThanEqualOrderByTotalCaloriesDesc(date, date);
+
+        return buildCalorieRanking(statsList);
+    }
+
     private LocalDate getLastWeekStart() { // 월요일 시작, 일요일 끝
         LocalDate today = LocalDate.now();
         LocalDate thisWeekMonday = today.with(DayOfWeek.MONDAY);
