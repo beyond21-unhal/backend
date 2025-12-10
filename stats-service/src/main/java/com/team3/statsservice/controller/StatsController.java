@@ -31,7 +31,7 @@ public class StatsController {
                 .body("지난 주 랭킹이 생성되었습니다.");
     }
 
-    @GetMapping("/user-stats/{userId}")
+    @GetMapping("/user-stats")
     @Operation(summary = "사용자별 통계 조회 API입니다.")
     @SecurityRequirement(name = "JWT")
     public ResponseEntity<?> viewStatsByUserId(

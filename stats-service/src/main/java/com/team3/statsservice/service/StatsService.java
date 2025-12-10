@@ -20,7 +20,7 @@ public class StatsService {
 
     private final StatsRepository statsRepository;
 
-    @jakarta.transaction.Transactional
+    @Transactional
     public void createLastWeekStats(Long userId, Integer totalDuration, Integer totalCalories) {
         LocalDate lastWeekStart = getLastWeekStart();
         LocalDate lastWeekEnd = getLastWeekEnd();
