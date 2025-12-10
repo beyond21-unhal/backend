@@ -38,4 +38,20 @@ public class StatsController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(statsService.getStatsByUserId(userId));
     }
+
+    @GetMapping("/last-week-time-ranking")
+    @Operation(summary = "지난 주 운동량 랭킹 조회 API입니다.")
+    @SecurityRequirement(name = "JWT")
+    public ResponseEntity<?> viewLastWeekTimeRanking() {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(statsService.getLastWeekTimeRanking());
+    }
+
+    @GetMapping("/last-week-calorie-ranking")
+    @Operation(summary = "지난 주 칼로리 소모량 랭킹 조회 API입니다.")
+    @SecurityRequirement(name = "JWT")
+    public ResponseEntity<?> viewLastWeekCalorieRanking() {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(statsService.getLastWeekCalorieRanking());
+    }
 }

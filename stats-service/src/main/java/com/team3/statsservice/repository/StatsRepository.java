@@ -10,5 +10,9 @@ public interface StatsRepository extends JpaRepository<Stats, Long> {
 
     List<Stats> findByUserId(Long userId);
 
+    List<Stats> findByStartDateOrderByTotalDurationDesc(LocalDate startDate);
+
+    List<Stats> findByStartDateOrderByTotalCaloriesDesc(LocalDate startDate);
+
     boolean existsByUserIdAndStartDate(Long userId, LocalDate startDate);
 }
