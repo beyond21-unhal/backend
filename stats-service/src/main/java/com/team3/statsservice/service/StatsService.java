@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -35,6 +36,10 @@ public class StatsService {
                 .build();
 
         statsRepository.save(stats);
+    }
+
+    public List<Stats> getStatsByUserId(Long userId) {
+        return statsRepository.findByUserId(userId);
     }
 
     private LocalDate getLastWeekStart() { // 월요일 시작, 일요일 끝

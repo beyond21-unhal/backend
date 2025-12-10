@@ -28,4 +28,14 @@ public class StatsController {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body("지난 주 랭킹이 생성되었습니다.");
     }
+
+    @GetMapping("/user-stats/{userId}")
+    @Operation(summary = "사용자별 통계 조회 API입니다.")
+    @SecurityRequirement(name = "JWT")
+    public ResponseEntity<?> viewStatsByUserId(
+            @Parameter(hidden = true) @RequestHeader("X-User-Id") Long userId
+    ) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(statsService.getStatsByUserId(userId));
+    }
 }
