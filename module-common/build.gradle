@@ -35,13 +35,13 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
-    api 'io.jsonwebtoken:jjwt-api:0.11.5'
+// [수정] 0.12.5로 통일
+    api 'io.jsonwebtoken:jjwt-api:0.12.5'
 
-    // 구현체는 런타임에만 필요하므로 runtimeOnly 유지
-    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
-    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+// [수정] 0.11.5 -> 0.12.5 로 변경 필수!
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.5'
 
-    // JSON 처리를 위해 Jackson도 api로 열어두면 편함
     api 'com.fasterxml.jackson.core:jackson-databind'
 }
 

@@ -1,13 +1,13 @@
-package com.amuraedo.modulecommon;
+package com.team3.memberservice;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class ModuleCommonApplicationTests {
+class MemberServiceApplicationTests {
 
-	@Test
-	void contextLoads() {
-	}
+    @Test
+    void contextLoads() {
+    }
 
 }
