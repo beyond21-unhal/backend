@@ -102,4 +102,29 @@ class ReportServiceTest {
         assertEquals(lastWeekStart, foundReport.getStartDate());
         assertEquals(lastWeekEnd, foundReport.getEndDate());
     }
+
+    @DisplayName("리포트 삭제")
+    @Test
+    void deleteReportById() {
+        // given
+        Long userId = 1L;
+
+        Report report = Report.builder()
+                .userId(userId)
+                .startDate(LocalDate.now().with(DayOfWeek.MONDAY))
+                .endDate(LocalDate.now().with(DayOfWeek.SUNDAY))
+                .plannedAmount(1000)
+                .achievedAmount(800)
+                .resultValue(200)
+                .build();
+
+        Report saved = reportRepository.save(report);
+        Long reportId = saved.getReportId();
+
+        // when
+        reportService.deleteReportById(userId, reportId);
+
+        // then
+        assertFalse(reportRepository.findById(reportId).isPresent(), "리포트가 삭제되지 않았습니다.");
+    }
 }
