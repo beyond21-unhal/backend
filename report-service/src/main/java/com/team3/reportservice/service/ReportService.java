@@ -2,15 +2,16 @@ package com.team3.reportservice.service;
 
 import com.team3.reportservice.domain.Report;
 import com.team3.reportservice.repository.ReportRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.List;
 
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class ReportService {
 
