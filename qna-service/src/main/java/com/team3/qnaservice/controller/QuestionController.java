@@ -51,13 +51,13 @@ public class QuestionController {
     @Operation(summary = "질문 수정 API 입니다.")
     @PatchMapping("/{questionId}")
     @SecurityRequirement(name = "JWT")
-    public ResponseEntity<Void> updateQuestion(
+    public ResponseEntity<QuestionResponseDTO> updateQuestion(
             @Parameter(hidden = true) @RequestHeader("X-User-Id") Long userId,
             @Parameter(hidden = true) @RequestHeader("X-User-Role") String role,
             @PathVariable Long questionId,
             @RequestBody QuestionUpdateDTO dto) {
-        questionService.updateQuestion(questionId, dto, userId);
-        return ResponseEntity.noContent().build();
+        QuestionResponseDTO updatedQuestion = questionService.updateQuestion(questionId, dto, userId);
+        return ResponseEntity.ok(updatedQuestion);
     }
 
     @Operation(summary = "질문 삭제 API입니다.")

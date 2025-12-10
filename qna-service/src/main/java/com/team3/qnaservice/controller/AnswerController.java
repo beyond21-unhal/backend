@@ -50,14 +50,15 @@ public class AnswerController {
     @Operation(summary = "답변 수정 API 입니다.")
     @PatchMapping("/{answerId}")
     @SecurityRequirement(name = "JWT")
-    public ResponseEntity<Void> updateAnswer(
+    public ResponseEntity<AnswerResponseDTO> updateAnswer(
             @Parameter(hidden = true) @RequestHeader("X-User-Id") Long userId,
             @Parameter(hidden = true) @RequestHeader("X-User-Role") String role,
             @RequestParam Long questionId,
             @PathVariable Long answerId,
             @RequestBody AnswerUpdateDTO dto) {
-        answerService.updateAnswer(answerId, dto, userId, questionId);
-        return ResponseEntity.noContent().build();
+
+        AnswerResponseDTO updatedAnswer = answerService.updateAnswer(answerId, dto, userId, questionId);
+        return ResponseEntity.ok(updatedAnswer);
     }
 
     @Operation(summary = "답변 삭제 API 입니다.")

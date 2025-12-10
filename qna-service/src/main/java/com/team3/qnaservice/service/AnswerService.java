@@ -50,13 +50,18 @@ public class AnswerService {
     }
 
     @Transactional
-    public void updateAnswer(Long answerId, AnswerUpdateDTO dto, Long userId, Long questionId) {
+    public AnswerResponseDTO updateAnswer(Long answerId, AnswerUpdateDTO dto, Long userId, Long questionId) {
         Answer answer = answerRepository.findById(answerId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 답변이 존재하지 않습니다."));
         if(!answer.getUserId().equals(userId)){
-            throw new IllegalStateException("수정 권한이 없습니다.");
+            throw new IllegalStateException("본인이 작성한 답변만 수정할 수 있습니다.");
         }
+        if (!answer.getQuestionId().equals(questionId)) {
+            throw new IllegalArgumentException("질문 ID가 일치하지 않습니다.");
+        }
+
         answer.update(dto.answerContent());
+        return AnswerResponseDTO.fromEntity(answer);
     }
 
     @Transactional

@@ -41,13 +41,17 @@ public class QuestionService {
     }
 
     @Transactional
-    public void updateQuestion(Long questionId, QuestionUpdateDTO dto, Long userId) {
+    public QuestionResponseDTO updateQuestion(Long questionId, QuestionUpdateDTO dto, Long userId) {
         Question question = questionRepository.findById(questionId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 질문이 존재하지 않습니다."));
         if(!question.getUserId().equals(userId)){
             throw new IllegalStateException("수정 권한이 없습니다.");
         }
+        if (question.isAnswered()) {
+            throw new IllegalStateException("답변이 존재하는 질문은 수정할 수 없습니다.");
+        }
         question.update(dto.questionTitle(), dto.questionContent());
+        return QuestionResponseDTO.fromEntity(question);
     }
 
     @Transactional
