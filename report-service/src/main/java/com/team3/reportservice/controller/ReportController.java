@@ -6,10 +6,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
 
 @RestController
 @RequestMapping("/report")
@@ -24,5 +23,22 @@ public class ReportController {
         reportService.createLastWeekReport(dto.userId(), dto.plannedAmount(), dto.achievedAmount());
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body("지난 주 리포트가 생성되었습니다.");
+    }
+
+    @GetMapping("/all-report/{userId}")
+    @Operation(summary = "사용자별 전체 리포트 조회 API입니다.")
+    public ResponseEntity<?> userViewReport(@PathVariable("userId") Long userId) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(reportService.getReportsByUserId(userId));
+    }
+
+    @GetMapping("/search-report/{userId}/{date}")
+    @Operation(summary = "날짜 검색을 통한 리포트 조회 API입니다.")
+    public ResponseEntity<?> searchViewReport(
+            @PathVariable("userId") Long userId,
+            @PathVariable("date") LocalDate date
+    ) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(reportService.getReportByDate(userId, date));
     }
 }

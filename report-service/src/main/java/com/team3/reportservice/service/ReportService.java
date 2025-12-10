@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -40,6 +41,14 @@ public class ReportService {
                 .build();
 
         reportRepository.save(report);
+    }
+
+    public List<Report> getReportsByUserId(Long userId) {
+        return reportRepository.findByUserId(userId);
+    }
+
+    public Report getReportByDate(Long userId, LocalDate date) {
+        return reportRepository.findByUserIdAndStartDateLessThanEqualAndEndDateGreaterThanEqual(userId, date, date);
     }
 
     private LocalDate getLastWeekStart() { // 월요일 시작, 일요일 끝
