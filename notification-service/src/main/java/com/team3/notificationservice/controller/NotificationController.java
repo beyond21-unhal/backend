@@ -1,46 +1,91 @@
 package com.team3.notificationservice.controller;
 
-import com.team3.notificationservice.dto.request.NotificationDTO;
+import com.team3.notificationservice.dto.request.AnswerCreatedRequest;
+import com.team3.notificationservice.dto.response.NotificationResponse;
 import com.team3.notificationservice.service.NotificationService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RequiredArgsConstructor
-@RestController // API 요청을 처리하는 컨트롤러임을 명시 (이거 없으면 일반 클래스 취급됨)
+@RestController
 @RequestMapping("/notification")
+@Tag(name = "알림 API", description = "QnA 답변 알림 생성 및 조회 서비스")
 public class NotificationController {
 
-    // 서비스 가져오기 RequiredArgsConstructor 필수 집가서 이해
     private final NotificationService notificationService;
 
-    @PostMapping("/notification")
-    @Tag(name = "postMapping", description = "사용자에게 새로운 알림을 생성합니다. 알림 내용, 수신자 ID, 발신자 ID 등을 전달하면 저장된 알림 ID가 반환됩니다")
-    @SecurityRequirement(name="JWT")
-    @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<String> notification(@RequestBody NotificationDTO dto){
-
-        // 컨트롤러가 직접 변환 X 서비스한테 저장
-        return ResponseEntity.status(HttpStatus.CREATED).body(notificationService.createNotification(dto));
-    }
-
-    @PatchMapping("/notification/{id}")
-    @Tag(name = "patchMapping", description = "알림을 사용자가 확인했음을 표시하기 위해 checkNotification 값을 true 로 변경합니다. 이미 읽음 처리된 알림은 동일한 상태로 유지됩니다")
-    @SecurityRequirement(name="JWT")
-    public ResponseEntity<Void> statusUpdate(@PathVariable Long id ){
-        notificationService.updateCheck(id);
+    @Operation(
+            summary = "[알림 생성] 답변 등록 시 알림 생성",
+            description = "트레이너가 질문에 답변을 등록하면 질문 작성자에게 알림을 생성합니다. (내부 서비스 호출용)"
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "알림 생성 성공"),
+            @ApiResponse(responseCode = "401", description = "인증 실패"),
+            @ApiResponse(responseCode = "403", description = "내부 시크릿 키 불일치")
+    })
+    @SecurityRequirement(name = "JWT")
+    @PostMapping("/answer-created")
+    public ResponseEntity<Void> answerCreated(@RequestBody AnswerCreatedRequest request) {
+        notificationService.handleAnswerCreated(request);
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/notification/{id}")
-    @Tag(name = "DeleteMapping", description = "사용자의 요청에 따라 특정 알림을 완전히 삭제합니다. 삭제된 알림은 복구할 수 없으며, 클라이언트는 204 No Content 응답을 받습니다")
-    @SecurityRequirement(name="JWT")
-    public ResponseEntity<Void> deleteNotification(@PathVariable Long id){
-        notificationService.deleteNotification(id);
-        return ResponseEntity.noContent().build();
+    @Operation(
+            summary = "[알림 조회] 사용자 전체 알림 목록",
+            description = "특정 사용자의 모든 알림을 최신순으로 조회합니다."
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "조회 성공"),
+            @ApiResponse(responseCode = "401", description = "인증 실패")
+    })
+    @SecurityRequirement(name = "JWT")
+    @GetMapping("/users/{userId}")
+    public ResponseEntity<List<NotificationResponse>> getUserNotifications(
+            @Parameter(description = "조회할 사용자 ID", required = true)
+            @PathVariable Long userId) {
+        return ResponseEntity.ok(notificationService.getUserNotifications(userId));
+    }
+
+    @Operation(
+            summary = "[알림 조회] 사용자 미확인 알림 목록",
+            description = "특정 사용자의 읽지 않은 알림만 최신순으로 조회합니다."
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "조회 성공"),
+            @ApiResponse(responseCode = "401", description = "인증 실패")
+    })
+    @SecurityRequirement(name = "JWT")
+    @GetMapping("/users/{userId}/unread")
+    public ResponseEntity<List<NotificationResponse>> getUnreadUserNotifications(
+            @Parameter(description = "조회할 사용자 ID", required = true)
+            @PathVariable Long userId) {
+        return ResponseEntity.ok(notificationService.getUnreadNotifications(userId));
+    }
+
+    @Operation(
+            summary = "[알림 상태] 알림 읽음 처리",
+            description = "특정 알림을 읽음 상태로 변경합니다."
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "읽음 처리 성공"),
+            @ApiResponse(responseCode = "401", description = "인증 실패"),
+            @ApiResponse(responseCode = "404", description = "해당 알림을 찾을 수 없음")
+    })
+    @SecurityRequirement(name = "JWT")
+    @PatchMapping("/{notificationId}/read")
+    public ResponseEntity<Void> markAsRead(
+            @Parameter(description = "읽음 처리할 알림 ID", required = true)
+            @PathVariable Long notificationId) {
+        notificationService.markAsRead(notificationId);
+        return ResponseEntity.ok().build();
     }
 }

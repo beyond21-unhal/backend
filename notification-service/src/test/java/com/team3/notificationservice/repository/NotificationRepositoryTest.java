@@ -1,76 +1,126 @@
 package com.team3.notificationservice.repository;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import com.team3.notificationservice.domain.Notification;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 
-import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
-
-//        ┌───────────────────────────────────────────────┐
-//        │                 TEST FLOW                     │
-//        ├───────────────────────────────────────────────┤
-//        │ 1. SpringBootTest로 실제 Repository 로딩       │
-//        │                                               │
-//        │ 2. @BeforeEach에서 테스트 데이터 DB에 저장       │
-//        │    n1 → save()                                │
-//        │    n2 → save()                                │
-//        │                                               │
-//        │ 3. @Test 실행                                  │
-//        │    findAllByUserId(1L) 호출                    │
-//        │      → JPA가 SQL 실행                          │
-//        │      → DB에서 결과 리스트 반환                 │
-//        │                                               │
-//        │ 4. assert로 결과 검증                          │
-//        │    - 리스트 크기 확인                          │
-//        │    - 내용 확인                                 │
-//        │                                               │
-//        │ 5. 테스트 성공                                 │
-//        └───────────────────────────────────────────────┘
-
-@SpringBootTest
+@DataJpaTest
+@ActiveProfiles("test")
+@DisplayName("NotificationRepository 통합 테스트")
 class NotificationRepositoryTest {
-    //Test 클래스에선 롬복 사용하지 않으니 @Autowired 사용하여 의존성 주입
+
     @Autowired
-    private NotificationRepository notificationRepo;
-    // DB와 연결 되는지 테스트 하기위하여 Mockito 사용하여 @Repository 모의객체 생성?
+    private NotificationRepository notificationRepository;
 
-    @BeforeEach // 테스트 전에 수행되어야 할 작업
-    void setup(){
-        Notification no1 = Notification.builder()
-                .sendByUserID(3L)
-                .userId(1L)
-                .content("테스트1")
+    private final Long TEST_USER_ID = 1L;
+    private final Long TEST_TRAINER_ID = 2L;
+
+    @BeforeEach
+    void setUp() {
+        notificationRepository.deleteAll();
+    }
+
+    @Nested
+    @DisplayName("findAllByUserIdOrderByNotificationIdDesc")
+    class FindAllByUserIdTest {
+
+        @Test
+        @DisplayName("성공: 사용자의 모든 알림을 최신순으로 조회한다")
+        void success_findAllByUserId() {
+            // given
+            Notification notification1 = createNotification("첫 번째 알림", false);
+            Notification notification2 = createNotification("두 번째 알림", true);
+            notificationRepository.saveAll(List.of(notification1, notification2));
+
+            // when
+            List<Notification> result = notificationRepository
+                    .findAllByUserIdOrderByNotificationIdDesc(TEST_USER_ID);
+
+            // then - 알림이 최신순(ID 내림차순)으로 정렬되는지 검증하는 테스트입니다
+            assertThat(result).hasSize(2);
+            assertThat(result.get(0).getNotificationId())
+                    .isGreaterThan(result.get(1).getNotificationId());
+        }
+
+        @Test
+        @DisplayName("성공: 다른 사용자의 알림은 조회되지 않는다")
+        void success_notIncludeOtherUserNotifications() {
+            // given
+            Notification myNotification = createNotification("내 알림", false);
+            Notification otherNotification = Notification.builder()
+                    .userId(999L)
+                    .sendByUserId(TEST_TRAINER_ID)
+                    .content("다른 사용자 알림")
+                    .build();
+            notificationRepository.saveAll(List.of(myNotification, otherNotification));
+
+            // when
+            List<Notification> result = notificationRepository
+                    .findAllByUserIdOrderByNotificationIdDesc(TEST_USER_ID);
+
+            // then - 다른 사용자의 알림이 조회되지 않는지 검증하는 테스트입니다
+            assertThat(result).hasSize(1);
+            assertThat(result.get(0).getUserId()).isEqualTo(TEST_USER_ID);
+        }
+    }
+
+    @Nested
+    @DisplayName("findAllByUserIdAndCheckNotificationFalseOrderByNotificationIdDesc")
+    class FindUnreadNotificationsTest {
+
+        @Test
+        @DisplayName("성공: 읽지 않은 알림만 조회한다")
+        void success_findUnreadOnly() {
+            // given
+            Notification unreadNotification = createNotification("읽지 않은 알림", false);
+            Notification readNotification = createNotification("읽은 알림", false);
+            readNotification.markAsRead();
+            notificationRepository.saveAll(List.of(unreadNotification, readNotification));
+
+            // when
+            List<Notification> result = notificationRepository
+                    .findAllByUserIdAndCheckNotificationFalseOrderByNotificationIdDesc(TEST_USER_ID);
+
+            // then - checkNotification=false인 알림만 필터링되는지 검증하는 테스트입니다
+            assertThat(result).hasSize(1);
+            assertThat(result.get(0).getCheckNotification()).isFalse();
+        }
+
+        @Test
+        @DisplayName("성공: 모든 알림을 읽었으면 빈 리스트를 반환한다")
+        void success_emptyWhenAllRead() {
+            // given
+            Notification readNotification = createNotification("읽은 알림", false);
+            readNotification.markAsRead();
+            notificationRepository.save(readNotification);
+
+            // when
+            List<Notification> result = notificationRepository
+                    .findAllByUserIdAndCheckNotificationFalseOrderByNotificationIdDesc(TEST_USER_ID);
+
+            // then
+            assertThat(result).isEmpty();
+        }
+    }
+
+    private Notification createNotification(String content, boolean isRead) {
+        Notification notification = Notification.builder()
+                .userId(TEST_USER_ID)
+                .sendByUserId(TEST_TRAINER_ID)
+                .content(content)
                 .build();
-        Notification no2 = Notification.builder()
-                .sendByUserID(2L)
-                .userId(1L)
-                .content("테스트2")
-                .build();
-
-        notificationRepo.save(no1);
-        notificationRepo.save(no2);
+        if (isRead) {
+            notification.markAsRead();
+        }
+        return notification;
     }
-    @AfterEach // 테스트 종료 후에 수행되어야할 작업
-    void clean(){
-        notificationRepo.deleteAll();
-    }
-
-    @Test
-    void findAllUserId(){
-        //when
-        List<Notification> result = notificationRepo.findAllByUserId(1L);
-        //then
-        assertThat(result).hasSize(2);
-        assertThat(result).extracting("content")
-                .contains("테스트1","테스트2");
-    }
-
-
 }

@@ -2,16 +2,15 @@ package com.team3.notificationservice.repository;
 
 import com.team3.notificationservice.domain.Notification;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-// DB와 대화하는 곳
-@Repository                                             // 메인클래스의 자료형
-public interface NotificationRepository extends JpaRepository<Notification,Long> {
-    List<Notification> findAllByUserId(Long userId);
-    Notification findAllByUserIdAndCheckNotificationIsFalse(Long userId);
+public interface NotificationRepository extends JpaRepository<Notification, Long> {
 
+    // 특정 유저의 모든 알림 조회 (최신순)
+    List<Notification> findAllByUserIdOrderByNotificationIdDesc(Long userId);
 
+    // 특정 유저의 읽지 않은 알림 조회 (최신순)
+    // Notification 엔티티의 필드명이 checkNotification 이므로 맞춰줍니다.
+    List<Notification> findAllByUserIdAndCheckNotificationFalseOrderByNotificationIdDesc(Long userId);
 }
-

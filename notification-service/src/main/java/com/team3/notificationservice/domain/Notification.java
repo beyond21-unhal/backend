@@ -1,40 +1,42 @@
 package com.team3.notificationservice.domain;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Getter
 @Entity
-@NoArgsConstructor
+@Table(name = "notification")
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Notification {
-    @Id // PK
-            @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long notificationId ; // 알림 ID
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long notificationId;   // PK
 
     @Column(nullable = false)
-    Long userId ; // USER ID
+    private Long userId;           // 알림 받는 유저(질문 작성자) ID
+
+    @Column(nullable = false, length = 500)
+    private String content;        // 알림 내용
 
     @Column(nullable = false)
-    String content; // 알림 내용
+    private Long sendByUserId;     // 알림 보낸 사람(트레이너) ID
 
     @Column(nullable = false)
-    Long sendByUserId; // 보낸사람
-
-    @Column
-    Boolean checkNotification =false ; // 알람 확인여부
+    private Boolean checkNotification = Boolean.FALSE; // 알림 확인 여부 (기본 false)
 
     @Builder
-    public Notification(Long sendByUserID, Long userId, String content) {
-        this.sendByUserId = sendByUserID;
+    public Notification(Long userId, String content, Long sendByUserId) {
         this.userId = userId;
         this.content = content;
-
-    }
-    public void update(Boolean check){
-        this.checkNotification = check;
+        this.sendByUserId = sendByUserId;
+        this.checkNotification = Boolean.FALSE;
     }
 
-
+    public void markAsRead() {
+        this.checkNotification = Boolean.TRUE;
+    }
 }

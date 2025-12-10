@@ -1,47 +1,71 @@
 package com.team3.notificationservice.service;
 
 import com.team3.notificationservice.domain.Notification;
-import com.team3.notificationservice.dto.request.NotificationDTO;
+import com.team3.notificationservice.dto.request.AnswerCreatedRequest;
+import com.team3.notificationservice.dto.response.NotificationResponse;
 import com.team3.notificationservice.repository.NotificationRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
-/*서비스에는 비즈니스 로직을 작성 여기가 로직..?
-* DB에 접근하여 데이터를 추가, 삭제, 수정, 선택과 같은 요청을 처리할 수 있어야함*/
-
+@Transactional(readOnly = true)
 public class NotificationService {
-    // service 는 DB에 접근하기 위하여 @Repository에 요청하여 DB로 부터 필요한 값을 가져옴
+
     private final NotificationRepository notificationRepository;
 
-    Notification notification;
-
+    /**
+     * 답변 생성 알림 저장
+     */
     @Transactional
-    public String createNotification(NotificationDTO dto){
-        Notification notification = dto.toEntity();
+    public void handleAnswerCreated(AnswerCreatedRequest request) {
+        // 알림 메시지 포맷팅
+        String message = String.format("질문 [%s]에 답변이 등록되었습니다.", request.questionTitle());
+
+        Notification notification = Notification.builder()
+                .userId(request.questionOwnerId())  // 질문 작성자에게 알림
+                .sendByUserId(request.trainerId())  // 답변 작성자(트레이너)
+                .content(message)
+                .build();
+
         notificationRepository.save(notification);
-
-        return "알림이 발송 되었습니다";
+        log.info("Notification saved for userId: {}", request.questionOwnerId());
     }
 
-    public List<Notification> findAllNotification(Long userId){
-        List<Notification> notificationList =  notificationRepository.findAllByUserId(userId);
-
-        return notificationList;
+    /**
+     * 유저 알림 전체 조회
+     */
+    public List<NotificationResponse> getUserNotifications(Long userId) {
+        return notificationRepository.findAllByUserIdOrderByNotificationIdDesc(userId)
+                .stream()
+                .map(NotificationResponse::fromEntity)
+                .collect(Collectors.toList());
     }
 
-
-    public void updateCheck(Long Id) {
-        Notification notification = notificationRepository.findAllByUserIdAndCheckNotificationIsFalse(Id);
-        notification.update(true);
+    /**
+     * 읽지 않은 알림 조회
+     */
+    public List<NotificationResponse> getUnreadNotifications(Long userId) {
+        return notificationRepository.findAllByUserIdAndCheckNotificationFalseOrderByNotificationIdDesc(userId)
+                .stream()
+                .map(NotificationResponse::fromEntity)
+                .collect(Collectors.toList());
     }
 
-    public void deleteNotification(Long notificationId){
-        notificationRepository.deleteById(notificationId);
-    }
+    /**
+     * 알림 읽음 처리
+     */
+    @Transactional
+    public void markAsRead(Long notificationId) {
+        Notification notification = notificationRepository.findById(notificationId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 알림을 찾을 수 없습니다."));
 
+        notification.markAsRead(); // checkNotification = true 로 변경
+    }
 }
