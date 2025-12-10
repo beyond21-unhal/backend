@@ -31,7 +31,7 @@ public class ReportController {
                 .body("지난 주 리포트가 생성되었습니다.");
     }
 
-    @GetMapping("/all-report/{userId}")
+    @GetMapping("/all-report")
     @Operation(summary = "사용자별 전체 리포트 조회 API입니다.")
     @SecurityRequirement(name = "JWT")
     public ResponseEntity<?> userViewReport(
@@ -41,7 +41,7 @@ public class ReportController {
                 .body(reportService.getReportsByUserId(userId));
     }
 
-    @GetMapping("/search-report/{userId}/{date}")
+    @GetMapping("/search-report/{date}")
     @Operation(summary = "날짜 검색을 통한 리포트 조회 API입니다.")
     @SecurityRequirement(name = "JWT")
     public ResponseEntity<?> searchViewReport(
@@ -52,15 +52,14 @@ public class ReportController {
                 .body(reportService.getReportByDate(userId, date));
     }
 
-    @DeleteMapping("/{userId}/{reportId}")
+    @DeleteMapping("/delete/{reportId}")
     @Operation(summary = "리포트 삭제 API입니다.")
     @SecurityRequirement(name = "JWT")
-    public ResponseEntity<String> deleteReport(
+    public ResponseEntity<?> deleteReport(
             @Parameter(hidden = true)  @RequestHeader("X-User-Id") Long userId,
             @PathVariable("reportId") Long reportId
     ) {
         reportService.deleteReportById(userId, reportId);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT)
-                .body("리포트가 삭제되었습니다.");
+        return ResponseEntity.noContent().build();
     }
 }
