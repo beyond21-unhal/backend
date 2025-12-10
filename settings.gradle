@@ -1,5 +1,0 @@
-rootProject.name = 'Unhal'
-include 'eureka-server'
-include 'gateway-service'
-include 'module-common'
-include 'member-service'
