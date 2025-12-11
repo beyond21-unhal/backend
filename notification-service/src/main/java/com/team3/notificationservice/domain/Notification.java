@@ -14,7 +14,7 @@ public class Notification {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long notificationId;   // PK
+    private Long notificationId;   // PK AutoIncrement
 
     @Column(nullable = false)
     private Long userId;           // 알림 받는 유저(질문 작성자) ID

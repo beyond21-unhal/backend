@@ -20,9 +20,7 @@ public class NotificationService {
 
     private final NotificationRepository notificationRepository;
 
-    /**
-     * 답변 생성 알림 저장
-     */
+    // 답변 생성 알림 저장
     @Transactional
     public void handleAnswerCreated(AnswerCreatedRequest request) {
         // 알림 메시지 포맷팅
@@ -38,9 +36,7 @@ public class NotificationService {
         log.info("Notification saved for userId: {}", request.questionOwnerId());
     }
 
-    /**
-     * 유저 알림 전체 조회
-     */
+    // 유저 알림 전체 조회
     public List<NotificationResponse> getUserNotifications(Long userId) {
         return notificationRepository.findAllByUserIdOrderByNotificationIdDesc(userId)
                 .stream()
@@ -48,9 +44,7 @@ public class NotificationService {
                 .collect(Collectors.toList());
     }
 
-    /**
-     * 읽지 않은 알림 조회
-     */
+    // 읽지 않은 알림 조회
     public List<NotificationResponse> getUnreadNotifications(Long userId) {
         return notificationRepository.findAllByUserIdAndCheckNotificationFalseOrderByNotificationIdDesc(userId)
                 .stream()
@@ -58,9 +52,7 @@ public class NotificationService {
                 .collect(Collectors.toList());
     }
 
-    /**
-     * 알림 읽음 처리
-     */
+    // 알림 읽음 처리
     @Transactional
     public void markAsRead(Long notificationId) {
         Notification notification = notificationRepository.findById(notificationId)
