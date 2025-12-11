@@ -10,10 +10,10 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 @SpringBootApplication(exclude = SecurityAutoConfiguration.class)
 @EnableDiscoveryClient
 @EnableJpaAuditing
-public class WorkoutPlanServiceApplication {
+public class WorkoutplanServiceApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(WorkoutPlanServiceApplication.class, args);
+        SpringApplication.run(WorkoutplanServiceApplication.class, args);
     }
 
 }
