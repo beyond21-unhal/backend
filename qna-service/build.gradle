@@ -6,7 +6,7 @@ plugins {
 
 group = 'com.team3'
 version = '0.0.1-SNAPSHOT'
-description = 'feed-service'
+description = 'qna-service'
 
 java {
     toolchain {
