@@ -2,8 +2,9 @@ package com.team3.reportservice.service;
 
 import com.team3.reportservice.client.ReportClient;
 import com.team3.reportservice.domain.Report;
+import com.team3.reportservice.dto.request.WeeklyRequestDTO;
 import com.team3.reportservice.dto.response.ReportViewDTO;
-import com.team3.reportservice.dto.response.WeeklySummaryDto;
+import com.team3.reportservice.dto.response.WeeklySummaryDTO;
 import com.team3.reportservice.repository.ReportRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -32,7 +33,8 @@ public class ReportService {
         }
 
         // resultValue 계산 (계획한 칼로리량 - 달성량)
-        WeeklySummaryDto summary = reportClient.getWeeklySummary(userId, lastWeekStart, lastWeekEnd);
+        WeeklyRequestDTO request = new WeeklyRequestDTO(userId, lastWeekStart, lastWeekEnd);
+        WeeklySummaryDTO summary = reportClient.getWeeklySummary(request);
 
         int plannedAmount = summary.plannedAmount() == null ? 0 : summary.plannedAmount();
         int achievedAmount = summary.achievedAmount() == null ? 0 : summary.achievedAmount();

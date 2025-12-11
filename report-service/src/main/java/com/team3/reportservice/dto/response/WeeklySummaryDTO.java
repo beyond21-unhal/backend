@@ -2,7 +2,7 @@ package com.team3.reportservice.dto.response;
 
 import java.time.LocalDate;
 
-public record WeeklySummaryDto (
+public record WeeklySummaryDTO(
         Long userId,
         LocalDate startDate,
         LocalDate endDate,
