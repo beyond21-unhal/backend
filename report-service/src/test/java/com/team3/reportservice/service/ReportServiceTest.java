@@ -38,7 +38,7 @@ class ReportServiceTest {
         Integer achievedAmount = 800;
 
         // when
-        reportService.createLastWeekReport(userId, plannedAmount, achievedAmount);
+        reportService.createLastWeekReport(userId);
 
         // then
         Report report = reportRepository.findTopByUserIdOrderByCreatedAtDesc(userId)
@@ -60,7 +60,7 @@ class ReportServiceTest {
         Integer plannedAmount = 1000;
         Integer achievedAmount = 800;
 
-        reportService.createLastWeekReport(userId, plannedAmount, achievedAmount);
+        reportService.createLastWeekReport(userId);
 
         // when
         List<ReportViewDTO> reports = reportService.getReportsByUserId(userId);

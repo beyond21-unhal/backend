@@ -1,7 +1,9 @@
 package com.team3.reportservice.service;
 
+import com.team3.reportservice.client.ReportClient;
 import com.team3.reportservice.domain.Report;
 import com.team3.reportservice.dto.response.ReportViewDTO;
+import com.team3.reportservice.dto.response.WeeklySummaryDto;
 import com.team3.reportservice.repository.ReportRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,9 +19,10 @@ import java.util.List;
 public class ReportService {
 
     private final ReportRepository reportRepository;
+    private final ReportClient reportClient;
 
     @Transactional
-    public void createLastWeekReport(Long userId, Integer plannedAmount, Integer achievedAmount) {
+    public void createLastWeekReport(Long userId) {
         LocalDate lastWeekStart = getLastWeekStart();
         LocalDate lastWeekEnd = getLastWeekEnd();
 
@@ -29,8 +32,10 @@ public class ReportService {
         }
 
         // resultValue 계산 (계획한 칼로리량 - 달성량)
-        plannedAmount = (plannedAmount == null) ? 0 : plannedAmount;
-        achievedAmount = (achievedAmount == null) ? 0 : achievedAmount;
+        WeeklySummaryDto summary = reportClient.getWeeklySummary(userId, lastWeekStart, lastWeekEnd);
+
+        int plannedAmount = summary.plannedAmount() == null ? 0 : summary.plannedAmount();
+        int achievedAmount = summary.achievedAmount() == null ? 0 : summary.achievedAmount();
         int resultValue = plannedAmount - achievedAmount;
 
         Report report = Report.builder()

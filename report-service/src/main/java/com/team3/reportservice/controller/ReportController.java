@@ -29,7 +29,7 @@ public class ReportController {
             @RequestBody CreateReportDTO dto,
             @Parameter(hidden = true) @RequestHeader("X-User-Id") Long userId
     ) {
-        reportService.createLastWeekReport(userId, dto.plannedAmount(), dto.achievedAmount());
+        reportService.createLastWeekReport(userId);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ApiResponse.success("리포트가 생성되었습니다."));
     }
