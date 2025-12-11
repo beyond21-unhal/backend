@@ -1,8 +1,5 @@
 package com.team3.workoutplanservice.config;
 
-
-
-
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
@@ -27,11 +24,12 @@ public class SwaggerConfig {
 
         // 2. 서버 정보 설정 (Gateway 주소)
         Server gatewayServer = new Server()
-                .url("http://localhost:8000/api/v1/dietplan-service")
+                .url("http://localhost:8000/api/v1/workoutplan-service")
                 .description("Gateway Server");
 
+
         return new OpenAPI()
-                .info(new Info().title("Diet Plan API").version("v1.0.0"))
+                .info(new Info().title("Workout Plan API").version("v1.0.0"))
                 .addServersItem(gatewayServer) // Gateway 주소 등록
                 .components(components);
         // ❌ .addSecurityItem(...) 삭제! (이게 있으면 모든 곳에 다 걸림)

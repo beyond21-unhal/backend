@@ -1,54 +1,68 @@
 package com.team3.workoutplanservice.controller;
 
 
+import com.team3.workoutplanservice.dto.request.WorkoutPlanRequest;
+import com.team3.workoutplanservice.service.WorkoutPlanService;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
 
 @RestController
 @RequestMapping("/workout")
 @RequiredArgsConstructor
-
 public class WorkoutPlanController {
+
     private final WorkoutPlanService workoutPlanService;
 
-
+    /** 운동 계획 생성 */
     @PostMapping
+    @SecurityRequirement(name = "JWT")
     public ResponseEntity<?> createWorkoutPlan(
-            @RequestParam Long userId,
+            @Parameter(hidden = true) @RequestHeader("X-User-Id") Long userId,
             @RequestBody WorkoutPlanRequest request
     ) {
         workoutPlanService.saveWorkoutPlan(userId, request);
-        return ResponseEntity.ok("운동 계획 등록을 완료했습니다.");
-    } //GET /workout-plans/daily?userId=1&date=2025-12-09 (호출 - 하루치 조회)
-
-
-    // 예시: /workout?userId=1
-    @GetMapping
-    public ResponseEntity<?> findWorkoutPlans(
-
-    ) {
-        Long userId = 1L;
-        return ResponseEntity.ok(
-                workoutPlanService.findWorkoutPlans(userId)
-        );
+        return ResponseEntity.ok("운동 계획 등록 완료");
     }
 
+    /** 날짜별 운동 계획 조회 */
+    @GetMapping
+    @SecurityRequirement(name = "JWT")
+    public ResponseEntity<?> getWorkoutByDate(
+            @Parameter(hidden = true) @RequestHeader("X-User-Id") Long userId,
+            @RequestParam("date") @org.springframework.format.annotation.DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+            LocalDate date
+    ) {
+        return ResponseEntity.ok(workoutPlanService.findByUserIdAndDate(userId, date));
+    }
 
+    /** 날짜별 운동 계획 수정 */
     @PatchMapping
-    public ResponseEntity<?> updateWorkoutPlan(
-            @RequestParam Long workoutPlanId,
+    @SecurityRequirement(name = "JWT")
+    public ResponseEntity<?> updateWorkoutPlanByDate(
+            @Parameter(hidden = true) @RequestHeader("X-User-Id") Long userId,
+            @RequestParam("date") @org.springframework.format.annotation.DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+            LocalDate date,
             @RequestBody WorkoutPlanRequest request
     ) {
-        workoutPlanService.updateWorkoutPlan(workoutPlanId, request);
-        return ResponseEntity.ok("운동 계획 수정을 완료했습니다.");
+        workoutPlanService.updateByDate(userId, date, request);
+        return ResponseEntity.ok("운동 계획 수정 완료");
     }
 
+    /** 날짜별 운동 계획 삭제 */
     @DeleteMapping
-    public ResponseEntity<?> deleteWorkoutPlan(
-            @RequestParam Long workoutPlanId
+    @SecurityRequirement(name = "JWT")
+    public ResponseEntity<?> deleteWorkoutPlanByDate(
+            @Parameter(hidden = true) @RequestHeader("X-User-Id") Long userId,
+            @RequestParam("date") @org.springframework.format.annotation.DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+            LocalDate date
     ) {
-        workoutPlanService.deleteWorkoutPlan(workoutPlanId);
-        return ResponseEntity.ok("운동 계획 삭제를 완료했습니다.");
+        workoutPlanService.deleteByDate(userId, date);
+        return ResponseEntity.ok("운동 계획 삭제 완료");
     }
 }

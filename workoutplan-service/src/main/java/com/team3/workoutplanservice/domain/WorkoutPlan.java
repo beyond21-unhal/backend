@@ -49,6 +49,8 @@ public class WorkoutPlan {
     @Column(nullable = false)
     private int burnedCalories; //소비 칼로리
 
+
+
     @Builder
     public WorkoutPlan(Long userId, String dayOfWeek, String exerciseType, String category, String difficulty, String bodyPart, LocalDate date, int workoutRecord, boolean isCompleted, int burnedCalories) {
         this.userId = userId;
