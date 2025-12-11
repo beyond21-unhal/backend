@@ -2,7 +2,9 @@ package com.team3.workoutplanservice.service;
 
 import com.team3.workoutplanservice.domain.WorkoutPlan;
 import com.team3.workoutplanservice.dto.request.WeeklyRequestDTO;
+import com.team3.workoutplanservice.dto.request.WeeklyStatsDTO;
 import com.team3.workoutplanservice.dto.request.WorkoutPlanRequest;
+import com.team3.workoutplanservice.dto.response.WeeklyStatsResponseDTO;
 import com.team3.workoutplanservice.dto.response.WeeklySummaryDTO;
 import com.team3.workoutplanservice.repository.WorkoutPlanRepository;
 import lombok.RequiredArgsConstructor;
@@ -84,5 +86,30 @@ public class WorkoutPlanService {
                 .plannedAmount(plannedAmount)
                 .achievedAmount(achievedAmount)
                 .build();
+    }
+
+    public WeeklyStatsResponseDTO getWeeklyRanking(WeeklyStatsDTO dto) {
+
+        List<WorkoutPlan> allPlans = workoutPlanRepository.findAllByDateBetweenAndUserId(dto.startDate(), dto.endDate(), dto.userId());
+        int totalCalories = 0;
+        int totalDuration = 0;
+
+        for (WorkoutPlan plan : allPlans) {
+
+            if(plan.isCompleted()) {
+                totalCalories+=plan.getBurnedCalories();
+                totalDuration+=plan.getWorkoutRecord();
+            }
+
+        }
+
+        return WeeklyStatsResponseDTO.builder()
+                .userId(dto.userId())
+                .startDate(dto.startDate())
+                .endDate(dto.endDate())
+                .totalCalories(totalCalories)
+                .totalDuration(totalDuration)
+                .build();
+
     }
 }
