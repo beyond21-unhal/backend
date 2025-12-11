@@ -34,7 +34,6 @@ public class DietPlanController {
     }
 
 
-    // 예시: /diet?userId=1&date=2025-12-08
     @GetMapping("/dietplan2")
     @SecurityRequirement(name = "JWT")
     public ResponseEntity<?> findTodayDietPlan(

@@ -23,7 +23,7 @@ public class DietPlan extends BaseEntity {
         private Long userId;
 
         @Column(nullable = false)
-        private String mealTime; // 식시시간대 아침, 점심, 저녁, 간식
+        private String mealTime;
 
         @Column(nullable = false)
         private Long foodId;
