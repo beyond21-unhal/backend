@@ -1,6 +1,7 @@
 package com.team3.workoutplanservice.controller;
 
 
+import com.team3.workoutplanservice.dto.request.WeeklyRequestDTO;
 import com.team3.workoutplanservice.dto.request.WorkoutPlanRequest;
 import com.team3.workoutplanservice.service.WorkoutPlanService;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -67,5 +68,11 @@ public class WorkoutPlanController {
     ) {
         workoutPlanService.deleteByDate(userId, date);
         return ResponseEntity.ok("운동 계획 삭제 완료");
+    }
+
+    @PostMapping("/weekly")
+    @SecurityRequirement(name = "JWT")
+    public ResponseEntity<?> getWeeklyWorkoutPlanValue(@RequestBody WeeklyRequestDTO dto){
+     return ResponseEntity.ok(workoutPlanService.getWeeklyValue(dto));
     }
 }
