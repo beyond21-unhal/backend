@@ -54,6 +54,30 @@ public class QuestionController {
         return ResponseEntity.ok(ApiResponse.success(results));
     }
 
+    @Operation(summary = "미답변 질문 조회 API(트레이너 전용)")
+    @GetMapping("/search/unanswered")
+    @SecurityRequirement(name = "JWT")
+    public ResponseEntity<ApiResponse<List<QuestionResponseDTO>>> getUnansweredQuestions(
+            @Parameter(hidden = true) @RequestHeader("X-User-Id") Long userId,
+            @Parameter(hidden = true) @RequestHeader("X-User-Role") String role) {
+
+        List<QuestionResponseDTO> results = questionService.getUnansweredQuestions(role);
+        return ResponseEntity.ok(ApiResponse.success(results));
+    }
+
+    @Operation(summary = "모든 질문 조회 API")
+    @GetMapping("/search/all")
+    @SecurityRequirement(name = "JWT")
+    public ResponseEntity<ApiResponse<List<QuestionResponseDTO>>> getAllQuestions(
+            @Parameter(hidden = true) @RequestHeader("X-User-Id") Long userId,
+            @Parameter(hidden = true) @RequestHeader("X-User-Role") String role) {
+
+        List<QuestionResponseDTO> results = questionService.getAllQuestions();
+        return ResponseEntity.ok(ApiResponse.success(results));
+    }
+
+
+
     @Operation(summary = "질문 수정 API 입니다.")
     @PatchMapping("/{questionId}")
     @SecurityRequirement(name = "JWT")
@@ -70,12 +94,12 @@ public class QuestionController {
     @Operation(summary = "질문 삭제 API입니다.")
     @DeleteMapping("/{questionId}")
     @SecurityRequirement(name = "JWT")
-    public ResponseEntity<ApiResponse<Void>> deleteQuestion(
+    public ResponseEntity<Void> deleteQuestion(
             @Parameter(hidden = true) @RequestHeader("X-User-Id") Long userId,
             @Parameter(hidden = true) @RequestHeader("X-User-Role") String role,
             @PathVariable Long questionId) {
 
         questionService.deleteQuestion(questionId, userId);
-        return ResponseEntity.ok(ApiResponse.success(null));
+        return ResponseEntity.noContent().build();
     }
 }

@@ -33,6 +33,21 @@ public class QuestionService {
                 .toList();
     }
 
+    public List<QuestionResponseDTO> getUnansweredQuestions(String role) {
+        return questionRepository
+                .findByIsAnsweredFalse()
+                .stream()
+                .map(QuestionResponseDTO::fromEntity)
+                .toList();
+    }
+
+    public List<QuestionResponseDTO> getAllQuestions() {
+        return questionRepository.findAll()
+                .stream()
+                .map(QuestionResponseDTO::fromEntity)
+                .toList();
+    }
+
     public List<QuestionResponseDTO> getMyQuestions(Long userId) {
         List<Question> questions = questionRepository.findQuestionsByUserId(userId);
         return questions.stream()
