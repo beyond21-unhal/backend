@@ -2,6 +2,7 @@ package com.team3.workoutplanservice.controller;
 
 
 import com.team3.workoutplanservice.dto.request.WeeklyRequestDTO;
+import com.team3.workoutplanservice.dto.request.WeeklyStatsDTO;
 import com.team3.workoutplanservice.dto.request.WorkoutPlanRequest;
 import com.team3.workoutplanservice.service.WorkoutPlanService;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -74,5 +75,12 @@ public class WorkoutPlanController {
     @SecurityRequirement(name = "JWT")
     public ResponseEntity<?> getWeeklyWorkoutPlanValue(@RequestBody WeeklyRequestDTO dto){
      return ResponseEntity.ok(workoutPlanService.getWeeklyValue(dto));
+    }
+
+    @PostMapping("/stats")
+    @SecurityRequirement(name = "JWT")
+    public ResponseEntity<?> getWeeklyWorkoutPlanStats(@RequestBody WeeklyStatsDTO dto){
+        return ResponseEntity.ok(workoutPlanService.getWeeklyRanking(dto));
+
     }
 }

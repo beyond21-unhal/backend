@@ -16,5 +16,4 @@ public interface WorkoutPlanRepository extends JpaRepository<WorkoutPlan, Long> 
     Optional<WorkoutPlan> findByUserIdAndDate(Long userId, LocalDate date);
 
     List<WorkoutPlan> findAllByDateBetweenAndUserId(LocalDate start, LocalDate end, Long userId);
-
 }
