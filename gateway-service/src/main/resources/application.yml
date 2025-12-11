@@ -13,4 +13,3 @@ eureka:
 springdoc:
   swagger-ui:
     path: /swagger
-
