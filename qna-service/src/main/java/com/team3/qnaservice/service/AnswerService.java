@@ -42,6 +42,7 @@ public class AnswerService {
                 userId                                 // 답변한 트레이너 ID
         );
         notificationClient.sendAnswerNotification(request);
+        return AnswerResponseDTO.fromEntity(saveAnswer);
     }
 
     public List<AnswerResponseDTO> getAnswersByAnswerContent(String answerContent) {
