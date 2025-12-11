@@ -2,6 +2,7 @@ package com.team3.statsservice.service;
 
 import com.team3.statsservice.domian.Stats;
 import com.team3.statsservice.dto.response.CalorieRankingDto;
+import com.team3.statsservice.dto.response.StatsViewDTO;
 import com.team3.statsservice.dto.response.TimeRankingDto;
 import com.team3.statsservice.repository.StatsRepository;
 import lombok.RequiredArgsConstructor;
@@ -41,7 +42,7 @@ public class StatsService {
         statsRepository.save(stats);
     }
 
-    public List<Stats> getStatsByUserId(Long userId) {
+    public List<StatsViewDTO> getStatsByUserId(Long userId) {
         return statsRepository.findByUserId(userId);
     }
 
@@ -100,8 +101,8 @@ public class StatsService {
             }
 
             result.add(new TimeRankingDto(
-                    stats.getUserId(),
                     currentRank,
+                    stats.getUserId(),
                     value
             ));
         }
@@ -128,8 +129,8 @@ public class StatsService {
             }
 
             result.add(new CalorieRankingDto(
-                    stats.getUserId(),
                     currentRank,
+                    stats.getUserId(),
                     value
             ));
         }

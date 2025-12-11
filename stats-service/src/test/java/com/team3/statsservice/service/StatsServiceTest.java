@@ -2,6 +2,7 @@ package com.team3.statsservice.service;
 
 import com.team3.statsservice.domian.Stats;
 import com.team3.statsservice.dto.response.CalorieRankingDto;
+import com.team3.statsservice.dto.response.StatsViewDTO;
 import com.team3.statsservice.dto.response.TimeRankingDto;
 import com.team3.statsservice.repository.StatsRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -60,11 +61,17 @@ class StatsServiceTest {
         statsService.createLastWeekStats(userId, 30, 300);
 
         // when
-        List<Stats> stats = statsService.getStatsByUserId(userId);
+        List<StatsViewDTO> stats = statsService.getStatsByUserId(userId);
 
         // then
         assertFalse(stats.isEmpty(), "해당 아이디의 통계가 존재하지 않습니다.");
-        assertEquals(userId, stats.get(0).getUserId());
+
+        StatsViewDTO first = stats.get(0);
+
+        assertNotNull(first.startDate());
+        assertNotNull(first.endDate());
+        assertEquals(30, first.totalDuration());
+        assertEquals(300, first.totalCalories());
     }
 
     @DisplayName("지난 주 운동량 랭킹 조회 테스트")
