@@ -65,6 +65,17 @@ public class QuestionController {
         return ResponseEntity.ok(ApiResponse.success(results));
     }
 
+    @Operation(summary = "모든 질문 조회 API")
+    @GetMapping("/search/all")
+    @SecurityRequirement(name = "JWT")
+    public ResponseEntity<ApiResponse<List<QuestionResponseDTO>>> getAllQuestions(
+            @Parameter(hidden = true) @RequestHeader("X-User-Id") Long userId,
+            @Parameter(hidden = true) @RequestHeader("X-User-Role") String role) {
+
+        List<QuestionResponseDTO> results = questionService.getAllQuestions();
+        return ResponseEntity.ok(ApiResponse.success(results));
+    }
+
 
 
     @Operation(summary = "질문 수정 API 입니다.")
