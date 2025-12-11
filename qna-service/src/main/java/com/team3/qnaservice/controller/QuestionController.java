@@ -2,6 +2,7 @@ package com.team3.qnaservice.controller;
 
 import com.team3.qnaservice.dto.request.QuestionCreateDTO;
 import com.team3.qnaservice.dto.request.QuestionUpdateDTO;
+import com.team3.qnaservice.dto.response.ApiResponse;
 import com.team3.qnaservice.dto.response.QuestionResponseDTO;
 import com.team3.qnaservice.service.QuestionService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -23,51 +24,58 @@ public class QuestionController {
     @Operation(summary = "질문 작성 API 입니다.")
     @PostMapping("/")
     @SecurityRequirement(name = "JWT")
-    public ResponseEntity<QuestionResponseDTO> createQuestion(
+    public ResponseEntity<ApiResponse<QuestionResponseDTO>> createQuestion(
             @Parameter(hidden = true) @RequestHeader("X-User-Id") Long userId,
             @Parameter(hidden = true) @RequestHeader("X-User-Role") String role,
             @RequestBody QuestionCreateDTO dto) {
+
         QuestionResponseDTO response = questionService.createQuestion(dto, userId);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(response));
     }
 
     @Operation(summary = "키워드로 질문 검색 API 입니다.")
     @GetMapping("/search")
     @SecurityRequirement(name = "JWT")
-    public ResponseEntity<List<QuestionResponseDTO>> search(@RequestParam String keyword) {
-        return ResponseEntity.ok(questionService.searchQuestions(keyword));
+    public ResponseEntity<ApiResponse<List<QuestionResponseDTO>>> search(
+            @RequestParam String keyword) {
+
+        List<QuestionResponseDTO> results = questionService.searchQuestions(keyword);
+        return ResponseEntity.ok(ApiResponse.success(results));
     }
 
     @Operation(summary = "내 질문 찾기 API 입니다.")
     @GetMapping("/search/myQuestion")
     @SecurityRequirement(name = "JWT")
-    public ResponseEntity<List<QuestionResponseDTO>> getMyQuestion(
+    public ResponseEntity<ApiResponse<List<QuestionResponseDTO>>> getMyQuestion(
             @Parameter(hidden = true) @RequestHeader("X-User-Id") Long userId,
-            @Parameter(hidden = true) @RequestHeader("X-User-Role") String role
-    ) {
-        return ResponseEntity.ok(questionService.getMyQuestions(userId));
+            @Parameter(hidden = true) @RequestHeader("X-User-Role") String role) {
+
+        List<QuestionResponseDTO> results = questionService.getMyQuestions(userId);
+        return ResponseEntity.ok(ApiResponse.success(results));
     }
 
     @Operation(summary = "질문 수정 API 입니다.")
     @PatchMapping("/{questionId}")
     @SecurityRequirement(name = "JWT")
-    public ResponseEntity<QuestionResponseDTO> updateQuestion(
+    public ResponseEntity<ApiResponse<QuestionResponseDTO>> updateQuestion(
             @Parameter(hidden = true) @RequestHeader("X-User-Id") Long userId,
             @Parameter(hidden = true) @RequestHeader("X-User-Role") String role,
             @PathVariable Long questionId,
             @RequestBody QuestionUpdateDTO dto) {
-        QuestionResponseDTO updatedQuestion = questionService.updateQuestion(questionId, dto, userId);
-        return ResponseEntity.ok(updatedQuestion);
+
+        QuestionResponseDTO response = questionService.updateQuestion(questionId, dto, userId);
+        return ResponseEntity.ok(ApiResponse.success(response));
     }
 
     @Operation(summary = "질문 삭제 API입니다.")
-    @DeleteMapping("{questionId}")
+    @DeleteMapping("/{questionId}")
     @SecurityRequirement(name = "JWT")
-    public ResponseEntity<Void> deleteQuestion(
+    public ResponseEntity<ApiResponse<Void>> deleteQuestion(
             @Parameter(hidden = true) @RequestHeader("X-User-Id") Long userId,
             @Parameter(hidden = true) @RequestHeader("X-User-Role") String role,
             @PathVariable Long questionId) {
-        questionService.deleteQuestion(questionId, userId);
-        return ResponseEntity.noContent().build();
+
+        ApiResponse<Void> response = questionService.deleteQuestion(questionId, userId);
+        return ResponseEntity.ok(ApiResponse.success(null));
     }
 }
