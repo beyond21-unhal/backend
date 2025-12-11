@@ -75,7 +75,7 @@ public class QuestionController {
             @Parameter(hidden = true) @RequestHeader("X-User-Role") String role,
             @PathVariable Long questionId) {
 
-        ApiResponse<Void> response = questionService.deleteQuestion(questionId, userId);
+        questionService.deleteQuestion(questionId, userId);
         return ResponseEntity.ok(ApiResponse.success(null));
     }
 }
