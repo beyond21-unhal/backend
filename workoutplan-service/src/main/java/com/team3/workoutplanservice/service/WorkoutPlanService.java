@@ -1,7 +1,9 @@
 package com.team3.workoutplanservice.service;
 
 import com.team3.workoutplanservice.domain.WorkoutPlan;
+import com.team3.workoutplanservice.dto.request.WeeklyRequestDTO;
 import com.team3.workoutplanservice.dto.request.WorkoutPlanRequest;
+import com.team3.workoutplanservice.dto.response.WeeklySummaryDTO;
 import com.team3.workoutplanservice.repository.WorkoutPlanRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -61,5 +63,26 @@ public class WorkoutPlanService {
     /** 기존 리스트 조회 (원한다면 유지) */
     public List<WorkoutPlan> findWorkoutPlans(Long userId) {
         return workoutPlanRepository.findByUserId(userId);
+    }
+
+    public WeeklySummaryDTO getWeeklyValue(WeeklyRequestDTO dto) {
+        List<WorkoutPlan> allPlans = workoutPlanRepository.findAllByDateBetweenAndUserId(dto.startDate(), dto.endDate(), dto.userId());
+        int plannedAmount = 0;
+        int achievedAmount = 0;
+
+        for (WorkoutPlan plan : allPlans) {
+            plannedAmount+=plan.getBurnedCalories();
+            if(plan.isCompleted()) {
+                achievedAmount+=plan.getBurnedCalories();
+            }
+
+        }
+        return WeeklySummaryDTO.builder()
+                .userId(dto.userId())
+                .startDate(dto.startDate())
+                .endDate(dto.endDate())
+                .plannedAmount(plannedAmount)
+                .achievedAmount(achievedAmount)
+                .build();
     }
 }
