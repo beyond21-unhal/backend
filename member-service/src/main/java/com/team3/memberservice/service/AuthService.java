@@ -1,16 +1,21 @@
 package com.team3.memberservice.service;
 
-import com.amuraedo.modulecommon.dto.response.ApiResponse;
-import com.amuraedo.modulecommon.util.JwtUtil;
 import com.team3.memberservice.domain.Member;
 import com.team3.memberservice.dto.request.LoginDTO;
 import com.team3.memberservice.dto.request.SignupDTO;
+import com.team3.memberservice.dto.response.ApiResponse;
 import com.team3.memberservice.repository.MemberRepository;
+import com.team3.memberservice.util.JwtUtil;
+import com.team3.memberservice.util.RedisKeyUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.concurrent.TimeUnit;
 
 
 @Service
@@ -20,6 +25,7 @@ public class AuthService {
     private final JwtUtil jwtUtil;
     private final PasswordEncoder passwordEncoder;
     private final MemberRepository memberRepository;
+    private final StringRedisTemplate redisTemplate;
 
     @Transactional
     public ApiResponse<?> createUser(SignupDTO signupDTO){
@@ -41,7 +47,7 @@ public class AuthService {
         return ApiResponse.success(accessToken);
     }
 
-    public ApiResponse<?> login(LoginDTO loginDTO) {
+    public ApiResponse<String> login(LoginDTO loginDTO) {
 // 1. 아이디 검증 (없으면 에러)
         Member member = memberRepository.findMemberByUsername(loginDTO.id())
                 .orElseThrow(() -> new IllegalArgumentException("가입되지 않은 아이디입니다."));
@@ -56,6 +62,18 @@ public class AuthService {
         String accessToken = jwtUtil.createToken(member.getUserId(), String.valueOf(member.getRole()));
 
         return ApiResponse.success(accessToken);
+    }
+
+    @Transactional
+    public boolean logout(String token){
+        Long expiration = jwtUtil.getExpiration(token);
+        if (expiration > 0) {
+            String key = RedisKeyUtil.getBlackListKey(token);
+            redisTemplate.opsForValue()
+                    .set(key, "logout", expiration, TimeUnit.MILLISECONDS);
+        }
+
+        return true;
     }
 
 }
