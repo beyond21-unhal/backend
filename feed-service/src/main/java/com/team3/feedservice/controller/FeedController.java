@@ -37,7 +37,7 @@ public class FeedController {
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @SecurityRequirement(name = "JWT")
-    public ResponseEntity<FeedResponseDTO> create(
+    public ResponseEntity<FeedResponseDTO> createFeed(
             @Parameter(hidden = true) @RequestHeader("X-User-Id") Long userId,
             @Parameter(hidden = true) @RequestHeader("X-User-Role") String role,
             @RequestPart("feed") FeedCreateDTO dto,
@@ -47,12 +47,14 @@ public class FeedController {
 
     @Operation(summary = "제목으로 피드검색 API입니다.")
     @GetMapping("/search/title")
+    @SecurityRequirement(name = "JWT")
     public ResponseEntity<List<FeedResponseDTO>> findByTitle(@RequestParam String feedTitle) {
         return ResponseEntity.ok(feedService.getFeedsByTitle(feedTitle));
     }
 
     @Operation(summary = "내용으로 피드검색 API입니다.")
     @GetMapping("/search/content")
+    @SecurityRequirement(name = "JWT")
     public ResponseEntity<List<FeedResponseDTO>> findByContent(@RequestParam String feedContent) {
         return ResponseEntity.ok(feedService.getFeedsByContent(feedContent));
     }
