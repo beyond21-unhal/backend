@@ -40,7 +40,7 @@ class StatsServiceTest {
         Integer totalCalories = 500;
 
         // when
-        statsService.createLastWeekStats(userId, totalDuration, totalCalories);
+        statsService.createLastWeekStats(userId);
 
         // then
         Stats stats = statsRepository.findTopByUserIdOrderByStartDateDesc(userId)
@@ -58,7 +58,7 @@ class StatsServiceTest {
     void getStatsByUserId() {
         // given
         Long userId = 1L;
-        statsService.createLastWeekStats(userId, 30, 300);
+        statsService.createLastWeekStats(userId);
 
         // when
         List<StatsViewDTO> stats = statsService.getStatsByUserId(userId);
@@ -82,9 +82,9 @@ class StatsServiceTest {
         Long user2 = 2L;
         Long user3 = 3L;
 
-        statsService.createLastWeekStats(user1, 30, 300);
-        statsService.createLastWeekStats(user2, 60, 500);
-        statsService.createLastWeekStats(user3, 45, 400);
+        statsService.createLastWeekStats(user1);
+        statsService.createLastWeekStats(user2);
+        statsService.createLastWeekStats(user3);
 
         // when
         List<TimeRankingDto> ranking = statsService.getLastWeekTimeRanking();
@@ -113,9 +113,9 @@ class StatsServiceTest {
         Long user2 = 2L;
         Long user3 = 3L;
 
-        statsService.createLastWeekStats(user1, 30, 300);
-        statsService.createLastWeekStats(user2, 60, 500);
-        statsService.createLastWeekStats(user3, 45, 400);
+        statsService.createLastWeekStats(user1);
+        statsService.createLastWeekStats(user2);
+        statsService.createLastWeekStats(user3);
 
         // when
         List<CalorieRankingDto> ranking = statsService.getLastWeekCalorieRanking();
@@ -144,9 +144,9 @@ class StatsServiceTest {
         Long user2 = 2L;
         Long user3 = 3L;
 
-        statsService.createLastWeekStats(user1, 30, 300);
-        statsService.createLastWeekStats(user2, 60, 500);
-        statsService.createLastWeekStats(user3, 45, 400);
+        statsService.createLastWeekStats(user1);
+        statsService.createLastWeekStats(user2);
+        statsService.createLastWeekStats(user3);
 
         // when
         List<TimeRankingDto> ranking = statsService.getTimeRankingByDate(LocalDate.now().minusDays(7));
@@ -175,9 +175,9 @@ class StatsServiceTest {
         Long user2 = 2L;
         Long user3 = 3L;
 
-        statsService.createLastWeekStats(user1, 30, 300);
-        statsService.createLastWeekStats(user2, 60, 500);
-        statsService.createLastWeekStats(user3, 45, 400);
+        statsService.createLastWeekStats(user1);
+        statsService.createLastWeekStats(user2);
+        statsService.createLastWeekStats(user3);
 
         // when
         List<CalorieRankingDto> ranking = statsService.getCalorieRankingByDate(LocalDate.now().minusDays(7));

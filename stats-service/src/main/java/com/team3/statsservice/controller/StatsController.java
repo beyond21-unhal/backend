@@ -28,10 +28,9 @@ public class StatsController {
     @Operation(summary = "지난 주 통계 생성 API입니다.")
     @SecurityRequirement(name = "JWT")
     public ResponseEntity<ApiResponse<String>> createLastWeekStats(
-            @RequestBody CreateStatsDTO dto,
             @Parameter(hidden = true) @RequestHeader("X-User-Id") Long userId
     ) {
-        statsService.createLastWeekStats(userId, dto.totalDuration(), dto.totalCalories());
+        statsService.createLastWeekStats(userId);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ApiResponse.success("지난 주 랭킹이 생성되었습니다."));
     }
