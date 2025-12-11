@@ -42,6 +42,13 @@ public class StatsController {
     public ResponseEntity<ApiResponse<List<StatsViewDTO>>> viewStatsByUserId(
             @Parameter(hidden = true) @RequestHeader("X-User-Id") Long userId
     ) {
+        List<StatsViewDTO> stats = statsService.getStatsByUserId(userId);
+
+        if (stats.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                    .body(ApiResponse.success(null));
+        }
+
         return ResponseEntity.status(HttpStatus.OK)
                 .body(ApiResponse.success(statsService.getStatsByUserId(userId)));
     }
@@ -50,6 +57,13 @@ public class StatsController {
     @Operation(summary = "지난 주 운동량 랭킹 조회 API입니다.")
     @SecurityRequirement(name = "JWT")
     public ResponseEntity<ApiResponse<List<TimeRankingDto>>> viewLastWeekTimeRanking() {
+        List<TimeRankingDto> rankingList = statsService.getLastWeekTimeRanking();
+
+        if (rankingList.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                    .body(ApiResponse.success(null));
+        }
+
         return ResponseEntity.status(HttpStatus.OK)
                 .body(ApiResponse.success(statsService.getLastWeekTimeRanking()));
     }
@@ -58,6 +72,14 @@ public class StatsController {
     @Operation(summary = "지난 주 칼로리 소모량 랭킹 조회 API입니다.")
     @SecurityRequirement(name = "JWT")
     public ResponseEntity<ApiResponse<List<CalorieRankingDto>>> viewLastWeekCalorieRanking() {
+
+        List<CalorieRankingDto> rankingList = statsService.getLastWeekCalorieRanking();
+
+        if (rankingList.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                    .body(ApiResponse.success(null));
+        }
+
         return ResponseEntity.status(HttpStatus.OK)
                 .body(ApiResponse.success(statsService.getLastWeekCalorieRanking()));
     }
@@ -65,7 +87,16 @@ public class StatsController {
     @GetMapping("/search-time-ranking/{date}")
     @Operation(summary = "날짜 검색을 통한 운동량 랭킹 조회 API입니다.")
     @SecurityRequirement(name = "JWT")
-    public ResponseEntity<ApiResponse<List<TimeRankingDto>>> viewTimeRankingByDate(@PathVariable("date") LocalDate date) {
+    public ResponseEntity<ApiResponse<List<TimeRankingDto>>> viewTimeRankingByDate(
+            @PathVariable("date") LocalDate date
+    ) {
+        List<TimeRankingDto> rankingList = statsService.getTimeRankingByDate(date);
+
+        if (rankingList.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                    .body(ApiResponse.success(null));
+        }
+
         return ResponseEntity.status(HttpStatus.OK)
                 .body(ApiResponse.success(statsService.getTimeRankingByDate(date)));
     }
@@ -73,7 +104,16 @@ public class StatsController {
     @GetMapping("/search-calorie-ranking/{date}")
     @Operation(summary = "날짜 검색을 통한 칼로리 소모량 랭킹 조회 API입니다.")
     @SecurityRequirement(name = "JWT")
-    public ResponseEntity<ApiResponse<List<CalorieRankingDto>>> viewCalorieRankingByDate(@PathVariable("date") LocalDate date) {
+    public ResponseEntity<ApiResponse<List<CalorieRankingDto>>> viewCalorieRankingByDate(
+            @PathVariable("date") LocalDate date
+    ) {
+        List<CalorieRankingDto> rankingList = statsService.getCalorieRankingByDate(date);
+
+        if (rankingList.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                    .body(ApiResponse.success(null));
+        }
+
         return ResponseEntity.status(HttpStatus.OK)
                 .body(ApiResponse.success(statsService.getCalorieRankingByDate(date)));
     }
