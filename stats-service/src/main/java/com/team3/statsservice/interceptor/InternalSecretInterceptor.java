@@ -1,8 +1,4 @@
-<<<<<<< Updated upstream:stats-service/src/main/java/com/team3/statsservice/interceptor/InternalSecretInterceptor.java
 package com.team3.statsservice.interceptor;
-=======
-package com.team3.dietplanservice.interceptor;
->>>>>>> Stashed changes:dietplan-service/src/main/java/com/team3/dietplanservice/Interceptor/InternalSecretInterceptor.java
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
