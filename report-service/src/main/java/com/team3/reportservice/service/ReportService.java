@@ -46,11 +46,16 @@ public class ReportService {
     }
 
     public List<ReportViewDTO> getReportsByUserId(Long userId) {
-        return reportRepository.findByUserId(userId);
+        List<Report> reports = reportRepository.findByUserId(userId);
+        return reports.stream()
+                .map(ReportViewDTO::fromEntity)
+                .toList();
     }
 
     public ReportViewDTO getReportByDate(Long userId, LocalDate date) {
-        return reportRepository.findByUserIdAndStartDateLessThanEqualAndEndDateGreaterThanEqual(userId, date, date);
+        Report report = reportRepository
+                .findByUserIdAndStartDateLessThanEqualAndEndDateGreaterThanEqual(userId, date, date);
+        return ReportViewDTO.fromEntity(report);
     }
 
     @Transactional
