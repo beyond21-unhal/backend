@@ -1,9 +1,11 @@
 package com.team3.qnaservice.service;
 
+import com.team3.qnaservice.client.NotificationClient;
 import com.team3.qnaservice.domain.Answer;
 import com.team3.qnaservice.domain.Question;
 import com.team3.qnaservice.dto.request.AnswerCreateDTO;
 import com.team3.qnaservice.dto.request.AnswerUpdateDTO;
+import com.team3.qnaservice.dto.request.AnswerCreatedRequest;
 import com.team3.qnaservice.dto.response.AnswerResponseDTO;
 import com.team3.qnaservice.repository.AnswerRepository;
 import com.team3.qnaservice.repository.QuestionRepository;
@@ -17,6 +19,7 @@ import java.util.List;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class AnswerService {
+    private final NotificationClient notificationClient;
     private final AnswerRepository answerRepository;
     private final QuestionRepository questionRepository;
 
@@ -33,6 +36,12 @@ public class AnswerService {
 
         Answer saveAnswer = answerRepository.save(answer);
         question.markAsAnswered();
+        AnswerCreatedRequest request = new AnswerCreatedRequest(
+                question.getUserId(),                  // 질문 작성자에게 알림
+                question.getQuestionTitle(),
+                userId                                 // 답변한 트레이너 ID
+        );
+        notificationClient.sendAnswerNotification(request);
         return AnswerResponseDTO.fromEntity(saveAnswer);
     }
 

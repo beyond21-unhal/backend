@@ -13,5 +13,7 @@ public interface QuestionRepository extends JpaRepository<Question,Long> {
 
     List<Question> findQuestionsByUserId(Long userId);
 
-
+    // 트레이너용
+    List<Question> findByIsAnsweredFalse();
+    List<Question> findByIsAnsweredFalseAndQuestionContentContaining(String keyword);
 }

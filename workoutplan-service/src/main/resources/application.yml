@@ -1,0 +1,14 @@
+#spring.application.name=workoutplan-service
+spring:
+  application:
+    name: workoutplan-service
+  profiles:
+    active: dev
+server:
+  port: 0
+eureka:
+  instance:
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+  client:
+    register-with-eureka: true
+    fetch-registry: true
