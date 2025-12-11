@@ -18,6 +18,8 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
 
     boolean existsByUserIdAndStartDate(Long userId, LocalDate startDate);
 
+    boolean existsByUserIdAndReportId(Long userId, Long reportId);
+
     // 테스트용
     Optional<Report> findTopByUserIdOrderByCreatedAtDesc(Long userId);
 }

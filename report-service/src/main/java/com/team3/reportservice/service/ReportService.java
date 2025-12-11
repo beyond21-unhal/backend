@@ -23,12 +23,12 @@ public class ReportService {
         LocalDate lastWeekStart = getLastWeekStart();
         LocalDate lastWeekEnd = getLastWeekEnd();
 
-        // 1. 이미 저번 주 리포트가 있는지 체크
+        // exception : 이미 지난 주 리포트가 있는지 체크
         if (reportRepository.existsByUserIdAndStartDate(userId, lastWeekStart)) {
             throw new IllegalStateException("이미 지난 주 리포트가 존재합니다.");
         }
 
-        // 2. resultValue 계산 (계획한 칼로리량 - 달성량)
+        // resultValue 계산 (계획한 칼로리량 - 달성량)
         plannedAmount = (plannedAmount == null) ? 0 : plannedAmount;
         achievedAmount = (achievedAmount == null) ? 0 : achievedAmount;
         int resultValue = plannedAmount - achievedAmount;
@@ -55,6 +55,12 @@ public class ReportService {
 
     @Transactional
     public void deleteReportById(Long userId, Long reportId) {
+
+        // exception : 삭제할 리포트가 존재하는지 체크
+        if (!reportRepository.existsByUserIdAndReportId(userId, reportId)) {
+            throw new IllegalStateException("리포트가 존재하지 않습니다.");
+        }
+
         reportRepository.deleteByUserIdAndReportId(userId, reportId);
     }
 
