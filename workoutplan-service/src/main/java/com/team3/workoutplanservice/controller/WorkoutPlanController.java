@@ -35,7 +35,8 @@ public class WorkoutPlanController {
     @SecurityRequirement(name = "JWT")
     public ResponseEntity<?> getWorkoutByDate(
             @Parameter(hidden = true) @RequestHeader("X-User-Id") Long userId,
-            @RequestParam("date") @org.springframework.format.annotation.DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+            @RequestParam("date")
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
             LocalDate date
     ) {
         return ResponseEntity.ok(workoutPlanService.findByUserIdAndDate(userId, date));
@@ -46,7 +47,8 @@ public class WorkoutPlanController {
     @SecurityRequirement(name = "JWT")
     public ResponseEntity<?> updateWorkoutPlanByDate(
             @Parameter(hidden = true) @RequestHeader("X-User-Id") Long userId,
-            @RequestParam("date") @org.springframework.format.annotation.DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+            @RequestParam("date")
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
             LocalDate date,
             @RequestBody WorkoutPlanRequest request
     ) {
@@ -59,7 +61,8 @@ public class WorkoutPlanController {
     @SecurityRequirement(name = "JWT")
     public ResponseEntity<?> deleteWorkoutPlanByDate(
             @Parameter(hidden = true) @RequestHeader("X-User-Id") Long userId,
-            @RequestParam("date") @org.springframework.format.annotation.DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+            @RequestParam("date")
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
             LocalDate date
     ) {
         workoutPlanService.deleteByDate(userId, date);
