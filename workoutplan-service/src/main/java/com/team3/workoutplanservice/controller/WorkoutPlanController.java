@@ -58,6 +58,20 @@ public class WorkoutPlanController {
         return ResponseEntity.ok("운동 계획 수정 완료");
     }
 
+    /** 운동 완료 처리(isCompleted = true) */
+    @PatchMapping("/complete")
+    @SecurityRequirement(name = "JWT")
+    public ResponseEntity<?> completeWorkoutPlan(
+            @Parameter(hidden = true) @RequestHeader("X-User-Id") Long userId,
+            @RequestParam("date")
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+            LocalDate date
+    ) {
+        workoutPlanService.completeWorkout(userId, date);
+        return ResponseEntity.ok("운동 완료 처리되었습니다.");
+    }
+
+
     /** 날짜별 운동 계획 삭제 */
     @DeleteMapping
     @SecurityRequirement(name = "JWT")
