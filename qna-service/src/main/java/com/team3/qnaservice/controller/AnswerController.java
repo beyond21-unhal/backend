@@ -67,12 +67,12 @@ public class AnswerController {
     @Operation(summary = "답변 삭제 API 입니다.")
     @DeleteMapping("/{answerId}")
     @SecurityRequirement(name = "JWT")
-    public ResponseEntity<ApiResponse<Void>> deleteAnswer(
+    public ResponseEntity<Void> deleteAnswer(
             @Parameter(hidden = true) @RequestHeader("X-User-Id") Long userId,
             @Parameter(hidden = true) @RequestHeader("X-User-Role") String role,
             @RequestParam Long questionId,
             @PathVariable Long answerId) {
         answerService.deleteAnswer(answerId, userId, questionId);
-        return ResponseEntity.ok(ApiResponse.success(null));
+        return ResponseEntity.noContent().build();
     }
 }
