@@ -37,6 +37,8 @@ public class DietPlan extends BaseEntity {
         @Column(nullable = false)
         private LocalDate date;
 
+        private String imageUrl;
+
         @Builder
         public DietPlan(Long userId, String mealTime, Long foodId, String foodName, Integer calories, LocalDate date) {
             this.userId = userId;
@@ -45,7 +47,13 @@ public class DietPlan extends BaseEntity {
             this.foodName = foodName;
             this.calories = calories;
             this.date = date;
+            this.imageUrl = imageUrl;
         }
+
+        public void attachImage(String imageUrl) {
+            this.imageUrl = imageUrl;
+    }
+
         public void update(String mealTime,
                            Long foodId,
                            String foodName,
@@ -62,3 +70,5 @@ public class DietPlan extends BaseEntity {
             this.dietPlanId = dietId;
         }
     }
+
+

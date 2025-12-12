@@ -3,10 +3,15 @@ package com.team3.dietplanservice.service;
 import com.team3.dietplanservice.domain.DietPlan;
 import com.team3.dietplanservice.dto.request.DietPlanRequest;
 import com.team3.dietplanservice.repository.DietPlanRepository;
+import io.minio.errors.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -16,36 +21,90 @@ import java.util.List;
 public class DietPlanService {
 
     private final DietPlanRepository dietPlanRepository;
+    private final MinioFileService minioFileService;
 
+    /**
+     * 식단 등록 (이미지 포함)
+     */
     @Transactional
-    public void saveDietPlan(Long userId, DietPlanRequest dietPlan) {
+    public DietPlan saveDietPlan(Long userId, DietPlanRequest dietPlan, MultipartFile image)
+            throws ServerException, InsufficientDataException, ErrorResponseException,
+            IOException, NoSuchAlgorithmException, InvalidKeyException,
+            InvalidResponseException, XmlParserException, InternalException {
+
+        String imageUrl = null;
+
+        // DTO → Entity
         DietPlan dietPlanEntity = dietPlan.toEntity(userId);
-        dietPlanRepository.save(dietPlanEntity);
+
+        // 이미지 업로드
+        if (image != null && !image.isEmpty()) {
+            imageUrl = minioFileService.saveImageFile(image);
+            dietPlanEntity.attachImage(imageUrl);
+        }
+
+        return dietPlanRepository.save(dietPlanEntity);
     }
 
-
+    /**
+     * 날짜별 식단 조회
+     */
     public List<DietPlan> findTodayDietPlan(Long userId, LocalDate date) {
         return dietPlanRepository.findByUserIdAndDate(userId, date);
     }
 
+    /**
+     * 식단 수정 (이미지 포함)
+     */
     @Transactional
-    public void updateDietPlan(Long dietPlanId, DietPlanRequest dietPlan) {
+    public void updateDietPlan(Long dietPlanId, DietPlanRequest dietPlan, MultipartFile newImage)
+            throws ServerException, InsufficientDataException, ErrorResponseException,
+            IOException, NoSuchAlgorithmException, InvalidKeyException,
+            InvalidResponseException, XmlParserException, InternalException {
 
         DietPlan origin = dietPlanRepository.findById(dietPlanId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 식단이 존재하지 않습니다."));
 
+        // 이미지 수정
+        if (newImage != null && !newImage.isEmpty()) {
+
+            // 기존 이미지 있으면 삭제
+            if (origin.getImageUrl() != null) {
+                minioFileService.deleteImageByUrl(origin.getImageUrl());
+            }
+
+            // 새 이미지 업로드
+            String newImageUrl = minioFileService.saveImageFile(newImage);
+            origin.attachImage(newImageUrl);
+        }
+
+        // 텍스트 부분 수정
         origin.update(
                 dietPlan.mealTime(),
                 dietPlan.foodId(),
                 dietPlan.foodName(),
                 dietPlan.calories(),
                 dietPlan.date()
-
         );
     }
 
+    /**
+     * 식단 삭제
+     */
     @Transactional
-    public void deleteDietPlan(Long dietPlanId) {
-        dietPlanRepository.deleteById(dietPlanId);
+    public void deleteDietPlan(Long dietPlanId)
+            throws ServerException, InsufficientDataException, ErrorResponseException,
+            IOException, NoSuchAlgorithmException, InvalidKeyException,
+            InvalidResponseException, XmlParserException, InternalException {
+
+        DietPlan dietPlan = dietPlanRepository.findById(dietPlanId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 식단이 존재하지 않습니다."));
+
+        // 이미지 삭제
+        if (dietPlan.getImageUrl() != null) {
+            minioFileService.deleteImageByUrl(dietPlan.getImageUrl());
+        }
+
+        dietPlanRepository.delete(dietPlan);
     }
 }
