@@ -55,6 +55,14 @@ public class WorkoutPlanService {
         );
     }
 
+    /* 운동 완료 상태 수정 */
+    @Transactional
+    public void completeWorkout(Long userId, LocalDate date) {
+        WorkoutPlan plan = findByUserIdAndDate(userId, date);
+
+        plan.complete(); // isCompleted = true 로 변경
+    }
+
     /** 날짜 기반 삭제 */
     @Transactional
     public void deleteByDate(Long userId, LocalDate date) {
