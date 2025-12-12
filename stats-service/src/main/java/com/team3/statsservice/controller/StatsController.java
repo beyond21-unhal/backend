@@ -29,9 +29,15 @@ public class StatsController {
     public ResponseEntity<ApiResponse<String>> createLastWeekStats(
             @Parameter(hidden = true) @RequestHeader("X-User-Id") Long userId
     ) {
-        statsService.createLastWeekStats(userId);
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(ApiResponse.success("지난 주 랭킹이 생성되었습니다."));
+        try {
+            statsService.createLastWeekStats(userId);
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(ApiResponse.success("지난 주 랭킹을 생성했습니다."));
+        } catch (IllegalStateException e) {
+            return ResponseEntity.ok(
+                    ApiResponse.success("이미 지난 주 통계가 존재합니다.")
+            );
+        }
     }
 
     @GetMapping("/user-stats")
