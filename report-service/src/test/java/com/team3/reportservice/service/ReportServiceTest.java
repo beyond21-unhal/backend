@@ -1,19 +1,25 @@
 package com.team3.reportservice.service;
 
+import com.team3.reportservice.client.ReportClient;
 import com.team3.reportservice.domain.Report;
+import com.team3.reportservice.dto.request.WeeklyRequestDTO;
 import com.team3.reportservice.dto.response.ReportViewDTO;
+import com.team3.reportservice.dto.response.WeeklySummaryDTO;
 import com.team3.reportservice.repository.ReportRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 class ReportServiceTest {
@@ -23,6 +29,9 @@ class ReportServiceTest {
 
     @Autowired
     private ReportRepository reportRepository;
+
+    @MockitoBean
+    private ReportClient reportClient;
 
     @BeforeEach
     void setUp() {
@@ -36,6 +45,17 @@ class ReportServiceTest {
         Long userId = 1L;
         Integer plannedAmount = 1000;
         Integer achievedAmount = 800;
+
+        WeeklySummaryDTO summary = new WeeklySummaryDTO(
+                userId,
+                LocalDate.now().minusWeeks(1),
+                LocalDate.now(),
+                plannedAmount,
+                achievedAmount
+        );
+
+        when(reportClient.getWeeklySummary(any(WeeklyRequestDTO.class)))
+                .thenReturn(summary);
 
         // when
         reportService.createLastWeekReport(userId);
@@ -60,6 +80,17 @@ class ReportServiceTest {
         Integer plannedAmount = 1000;
         Integer achievedAmount = 800;
 
+        WeeklySummaryDTO summary = new WeeklySummaryDTO(
+                userId,
+                LocalDate.now().minusWeeks(1),
+                LocalDate.now(),
+                plannedAmount,
+                achievedAmount
+        );
+
+        when(reportClient.getWeeklySummary(any(WeeklyRequestDTO.class)))
+                .thenReturn(summary);
+
         reportService.createLastWeekReport(userId);
 
         // when
@@ -74,7 +105,10 @@ class ReportServiceTest {
         assertNotNull(first.endDate());
         assertEquals(plannedAmount, first.plannedAmount());
         assertEquals(achievedAmount, first.achievedAmount());
-        assertEquals(plannedAmount - achievedAmount, first.resultValue());
+
+        String message = first.resultValue();
+        assertNotNull(message);
+        assertTrue(message.contains(String.valueOf(plannedAmount - achievedAmount)));
     }
 
     @DisplayName("날짜 검색을 통한 리포트 조회")
@@ -110,7 +144,10 @@ class ReportServiceTest {
         assertEquals(lastWeekEnd, foundReport.endDate());
         assertEquals(1000, foundReport.plannedAmount());
         assertEquals(800, foundReport.achievedAmount());
-        assertEquals(200, foundReport.resultValue());
+
+        String message = foundReport.resultValue();
+        assertNotNull(message);
+        assertTrue(message.contains("200"));
     }
 
     @DisplayName("리포트 삭제")
