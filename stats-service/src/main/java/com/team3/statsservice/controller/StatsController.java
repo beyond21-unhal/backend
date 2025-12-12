@@ -1,6 +1,5 @@
 package com.team3.statsservice.controller;
 
-import com.team3.statsservice.dto.request.CreateStatsDTO;
 import com.team3.statsservice.dto.response.ApiResponse;
 import com.team3.statsservice.dto.response.CalorieRankingDto;
 import com.team3.statsservice.dto.response.StatsViewDTO;
