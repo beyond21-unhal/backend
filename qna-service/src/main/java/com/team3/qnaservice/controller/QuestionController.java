@@ -54,6 +54,19 @@ public class QuestionController {
         return ResponseEntity.ok(ApiResponse.success(results));
     }
 
+    @Operation(summary = "questionId로 질문 조회 API 입니다.")
+    @GetMapping("/{questionId}")
+    @SecurityRequirement(name = "JWT")
+    public ResponseEntity<ApiResponse<QuestionResponseDTO>> getQuestionById(
+            @Parameter(hidden = true) @RequestHeader("X-User-Id") Long userId,
+            @Parameter(hidden = true) @RequestHeader("X-User-Role") String role,
+            @PathVariable Long questionId) {
+
+        QuestionResponseDTO result = questionService.getQuestionById(questionId);
+        return ResponseEntity.ok(ApiResponse.success(result));
+    }
+
+
     @Operation(summary = "미답변 질문 조회 API(트레이너 전용)")
     @GetMapping("/search/unanswered")
     @SecurityRequirement(name = "JWT")

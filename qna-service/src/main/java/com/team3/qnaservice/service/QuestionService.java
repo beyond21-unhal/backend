@@ -55,6 +55,14 @@ public class QuestionService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
+    public QuestionResponseDTO getQuestionById(Long questionId) {
+        return questionRepository.findById(questionId)
+                .map(QuestionResponseDTO::fromEntity)
+                .orElseThrow(() -> new IllegalArgumentException("해당 질문이 존재하지 않습니다."));
+    }
+
+
     @Transactional
     public QuestionResponseDTO updateQuestion(Long questionId, QuestionUpdateDTO dto, Long userId) {
         Question question = questionRepository.findById(questionId)
@@ -81,4 +89,6 @@ public class QuestionService {
         }
         questionRepository.delete(question);
     }
+
+
 }

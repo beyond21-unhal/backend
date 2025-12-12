@@ -80,12 +80,12 @@ public class FeedController {
     @Operation(summary = "피드 삭제 API입니다.")
     @DeleteMapping("/{feedId}")
     @SecurityRequirement(name = "JWT")
-    public ResponseEntity<ApiResponse<Void>> deleteFeed(
+    public ResponseEntity<Void> deleteFeed(
             @Parameter(hidden = true) @RequestHeader("X-User-Id") Long userId,
             @Parameter(hidden = true) @RequestHeader("X-User-Role") String role,
             @PathVariable Long feedId) throws ServerException, InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
         feedService.deleteFeed(feedId, userId);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(ApiResponse.success(null));
+        return ResponseEntity.noContent().build();
     }
 
 }

@@ -2,6 +2,7 @@ package com.team3.statsservice.service;
 
 import com.team3.statsservice.domian.Stats;
 import com.team3.statsservice.dto.response.CalorieRankingDto;
+import com.team3.statsservice.dto.response.StatsViewDTO;
 import com.team3.statsservice.dto.response.TimeRankingDto;
 import com.team3.statsservice.repository.StatsRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,7 +40,7 @@ class StatsServiceTest {
         Integer totalCalories = 500;
 
         // when
-        statsService.createLastWeekStats(userId, totalDuration, totalCalories);
+        statsService.createLastWeekStats(userId);
 
         // then
         Stats stats = statsRepository.findTopByUserIdOrderByStartDateDesc(userId)
@@ -57,14 +58,20 @@ class StatsServiceTest {
     void getStatsByUserId() {
         // given
         Long userId = 1L;
-        statsService.createLastWeekStats(userId, 30, 300);
+        statsService.createLastWeekStats(userId);
 
         // when
-        List<Stats> stats = statsService.getStatsByUserId(userId);
+        List<StatsViewDTO> stats = statsService.getStatsByUserId(userId);
 
         // then
         assertFalse(stats.isEmpty(), "해당 아이디의 통계가 존재하지 않습니다.");
-        assertEquals(userId, stats.get(0).getUserId());
+
+        StatsViewDTO first = stats.get(0);
+
+        assertNotNull(first.startDate());
+        assertNotNull(first.endDate());
+        assertEquals(30, first.totalDuration());
+        assertEquals(300, first.totalCalories());
     }
 
     @DisplayName("지난 주 운동량 랭킹 조회 테스트")
@@ -75,9 +82,9 @@ class StatsServiceTest {
         Long user2 = 2L;
         Long user3 = 3L;
 
-        statsService.createLastWeekStats(user1, 30, 300);
-        statsService.createLastWeekStats(user2, 60, 500);
-        statsService.createLastWeekStats(user3, 45, 400);
+        statsService.createLastWeekStats(user1);
+        statsService.createLastWeekStats(user2);
+        statsService.createLastWeekStats(user3);
 
         // when
         List<TimeRankingDto> ranking = statsService.getLastWeekTimeRanking();
@@ -106,9 +113,9 @@ class StatsServiceTest {
         Long user2 = 2L;
         Long user3 = 3L;
 
-        statsService.createLastWeekStats(user1, 30, 300);
-        statsService.createLastWeekStats(user2, 60, 500);
-        statsService.createLastWeekStats(user3, 45, 400);
+        statsService.createLastWeekStats(user1);
+        statsService.createLastWeekStats(user2);
+        statsService.createLastWeekStats(user3);
 
         // when
         List<CalorieRankingDto> ranking = statsService.getLastWeekCalorieRanking();
@@ -137,9 +144,9 @@ class StatsServiceTest {
         Long user2 = 2L;
         Long user3 = 3L;
 
-        statsService.createLastWeekStats(user1, 30, 300);
-        statsService.createLastWeekStats(user2, 60, 500);
-        statsService.createLastWeekStats(user3, 45, 400);
+        statsService.createLastWeekStats(user1);
+        statsService.createLastWeekStats(user2);
+        statsService.createLastWeekStats(user3);
 
         // when
         List<TimeRankingDto> ranking = statsService.getTimeRankingByDate(LocalDate.now().minusDays(7));
@@ -168,9 +175,9 @@ class StatsServiceTest {
         Long user2 = 2L;
         Long user3 = 3L;
 
-        statsService.createLastWeekStats(user1, 30, 300);
-        statsService.createLastWeekStats(user2, 60, 500);
-        statsService.createLastWeekStats(user3, 45, 400);
+        statsService.createLastWeekStats(user1);
+        statsService.createLastWeekStats(user2);
+        statsService.createLastWeekStats(user3);
 
         // when
         List<CalorieRankingDto> ranking = statsService.getCalorieRankingByDate(LocalDate.now().minusDays(7));
