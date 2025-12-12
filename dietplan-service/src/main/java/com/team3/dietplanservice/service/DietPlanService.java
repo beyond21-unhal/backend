@@ -2,6 +2,7 @@ package com.team3.dietplanservice.service;
 
 import com.team3.dietplanservice.domain.DietPlan;
 import com.team3.dietplanservice.dto.request.DietPlanRequest;
+import com.team3.dietplanservice.dto.response.DietPlanResponse;
 import com.team3.dietplanservice.repository.DietPlanRepository;
 import io.minio.errors.*;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,7 @@ import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -42,8 +44,25 @@ public class DietPlanService {
     /**
      * 날짜별 식단 조회
      */
-    public List<DietPlan> findTodayDietPlan(Long userId, LocalDate date) {
-        return dietPlanRepository.findByUserIdAndDate(userId, date);
+    public List<DietPlanResponse> findTodayDietPlan(Long userId, LocalDate date) {
+        List<DietPlan> temp = dietPlanRepository.findByUserIdAndDate(userId, date);
+
+        List<DietPlanResponse> result = new ArrayList<>();
+        for (DietPlan dietPlan : temp) {
+            result.add(
+                    DietPlanResponse.builder()
+                            .dietPlanId(dietPlan.getDietPlanId())
+                            .mealTime(dietPlan.getMealTime())
+                            .calories(dietPlan.getCalories())
+                            .foodId(dietPlan.getFoodId())
+                            .foodName(dietPlan.getFoodName())
+                            .imageUrl(dietPlan.getImageUrl())
+                            .build()
+            );
+
+        }
+
+        return result;
     }
 
     /**

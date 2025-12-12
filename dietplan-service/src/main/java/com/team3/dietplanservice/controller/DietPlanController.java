@@ -1,8 +1,10 @@
 package com.team3.dietplanservice.controller;
 
+import com.team3.dietplanservice.domain.DietPlan;
 import com.team3.dietplanservice.dto.request.DietPlanRequest;
 import com.team3.dietplanservice.service.DietPlanService;
 import io.minio.errors.*;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +28,7 @@ public class DietPlanController {
     /**
      * 식단 등록 (이미지 포함)
      */
+    @Operation(summary = "식단등록")
     @PostMapping(consumes = {"multipart/form-data"})
     @SecurityRequirement(name = "JWT")
     public ResponseEntity<?> createDietPlan(
@@ -42,7 +45,8 @@ public class DietPlanController {
     /**
      * 날짜별 식단 조회
      */
-    @GetMapping
+    @Operation(summary = "날짜별 식단조회")
+    @GetMapping("/search/date")
     @SecurityRequirement(name = "JWT")
     public ResponseEntity<?> findTodayDietPlan(
             @Parameter(hidden = true) @RequestHeader("X-User-Id") Long userId,
@@ -58,6 +62,7 @@ public class DietPlanController {
     /**
      * 식단 수정 (이미지 포함)
      */
+    @Operation(summary = "식단수정")
     @PatchMapping(
             value = "/{dietPlanId}",
             consumes = {"multipart/form-data"}
@@ -79,6 +84,7 @@ public class DietPlanController {
     /**
      * 식단 삭제
      */
+    @Operation(summary = "식단삭제")
     @DeleteMapping("/{dietPlanId}")
     @SecurityRequirement(name = "JWT")
     public ResponseEntity<?> deleteDietPlan(
