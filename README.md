@@ -21,7 +21,7 @@
 - GitHub: https://github.com/Jae-yeol1
 
 
-# 🏋️‍♀️ 운할 (Woonhal) - What if I hadn't skipped my workout?
+# 🏋️‍♀️ 운할 (Unhal) - What if I hadn't skipped my workout?
 
 <div align="center">
 
