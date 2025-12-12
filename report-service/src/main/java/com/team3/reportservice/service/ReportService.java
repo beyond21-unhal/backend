@@ -1,7 +1,10 @@
 package com.team3.reportservice.service;
 
+import com.team3.reportservice.client.ReportClient;
 import com.team3.reportservice.domain.Report;
+import com.team3.reportservice.dto.request.WeeklyRequestDTO;
 import com.team3.reportservice.dto.response.ReportViewDTO;
+import com.team3.reportservice.dto.response.WeeklySummaryDTO;
 import com.team3.reportservice.repository.ReportRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,9 +20,10 @@ import java.util.List;
 public class ReportService {
 
     private final ReportRepository reportRepository;
+    private final ReportClient reportClient;
 
     @Transactional
-    public void createLastWeekReport(Long userId, Integer plannedAmount, Integer achievedAmount) {
+    public void createLastWeekReport(Long userId) {
         LocalDate lastWeekStart = getLastWeekStart();
         LocalDate lastWeekEnd = getLastWeekEnd();
 
@@ -29,8 +33,11 @@ public class ReportService {
         }
 
         // resultValue 계산 (계획한 칼로리량 - 달성량)
-        plannedAmount = (plannedAmount == null) ? 0 : plannedAmount;
-        achievedAmount = (achievedAmount == null) ? 0 : achievedAmount;
+        WeeklyRequestDTO request = new WeeklyRequestDTO(userId, lastWeekStart, lastWeekEnd);
+        WeeklySummaryDTO summary = reportClient.getWeeklySummary(request);
+
+        int plannedAmount = summary.plannedAmount() == null ? 0 : summary.plannedAmount();
+        int achievedAmount = summary.achievedAmount() == null ? 0 : summary.achievedAmount();
         int resultValue = plannedAmount - achievedAmount;
 
         Report report = Report.builder()
@@ -46,11 +53,16 @@ public class ReportService {
     }
 
     public List<ReportViewDTO> getReportsByUserId(Long userId) {
-        return reportRepository.findByUserId(userId);
+        List<Report> reports = reportRepository.findByUserId(userId);
+        return reports.stream()
+                .map(ReportViewDTO::fromEntity)
+                .toList();
     }
 
     public ReportViewDTO getReportByDate(Long userId, LocalDate date) {
-        return reportRepository.findByUserIdAndStartDateLessThanEqualAndEndDateGreaterThanEqual(userId, date, date);
+        Report report = reportRepository
+                .findByUserIdAndStartDateLessThanEqualAndEndDateGreaterThanEqual(userId, date, date);
+        return ReportViewDTO.fromEntity(report);
     }
 
     @Transactional
