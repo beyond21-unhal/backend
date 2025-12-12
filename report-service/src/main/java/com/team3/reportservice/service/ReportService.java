@@ -27,11 +27,6 @@ public class ReportService {
         LocalDate lastWeekStart = getLastWeekStart();
         LocalDate lastWeekEnd = getLastWeekEnd();
 
-        // exception : 이미 지난 주 리포트가 있는지 체크
-        if (reportRepository.existsByUserIdAndStartDate(userId, lastWeekStart)) {
-            throw new IllegalStateException("이미 지난 주 리포트가 존재합니다.");
-        }
-
         // resultValue 계산 (계획한 칼로리량 - 달성량)
         WeeklyRequestDTO request = new WeeklyRequestDTO(userId, lastWeekStart, lastWeekEnd);
         WeeklySummaryDTO summary = reportClient.getWeeklySummary(request);
