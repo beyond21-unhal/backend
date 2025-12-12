@@ -25,7 +25,7 @@ public record DietPlanRequest(
          @NotBlank(message = "식사시간을 선택해주세요")
          String mealTime,
 
-         @NotBlank(message = "날짜를 입력해주세요")
+         @NotNull(message = "날짜를 입력해주세요")
          LocalDate date
 
 
@@ -39,7 +39,7 @@ public record DietPlanRequest(
                 .foodName(foodName)
                 .calories(calories)
                 .date(date)
+                .imageUrl(null)
                 .build();
-
     }
 }

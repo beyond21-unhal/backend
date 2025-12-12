@@ -5,6 +5,7 @@ public record DietPlanResponse (
         String mealTime,
         Long foodId,
         Integer calories,
-        String foodName
+        String foodName,
+        String imageUrl
 
 ) {}

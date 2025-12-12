@@ -26,7 +26,7 @@ public class DietPlanController {
     /**
      * 식단 등록 (이미지 포함)
      */
-    @PostMapping
+    @PostMapping(consumes = {"multipart/form-data"})
     @SecurityRequirement(name = "JWT")
     public ResponseEntity<?> createDietPlan(
             @Parameter(hidden = true) @RequestHeader("X-User-Id") Long userId,
@@ -34,7 +34,7 @@ public class DietPlanController {
 
             @RequestPart("diet") DietPlanRequest dietPlan,
             @RequestPart(value = "image", required = false) MultipartFile image
-    ) throws ServerException, InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
+    ) throws Exception {
         dietPlanService.saveDietPlan(userId, dietPlan, image);
         return ResponseEntity.ok("식단 등록을 완료했습니다.");
     }
@@ -58,7 +58,10 @@ public class DietPlanController {
     /**
      * 식단 수정 (이미지 포함)
      */
-    @PatchMapping("/{dietPlanId}")
+    @PatchMapping(
+            value = "/{dietPlanId}",
+            consumes = {"multipart/form-data"}
+    )
     @SecurityRequirement(name = "JWT")
     public ResponseEntity<?> updateDietPlan(
             @Parameter(hidden = true) @RequestHeader("X-User-Id") Long userId,
@@ -67,10 +70,11 @@ public class DietPlanController {
             @PathVariable Long dietPlanId,
             @RequestPart("diet") DietPlanRequest dietPlan,
             @RequestPart(value = "image", required = false) MultipartFile newImage
-    ) throws ServerException, InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
+    ) throws Exception {
         dietPlanService.updateDietPlan(dietPlanId, dietPlan, newImage);
         return ResponseEntity.ok("식단 수정을 완료했습니다.");
     }
+
 
     /**
      * 식단 삭제
