@@ -301,6 +301,12 @@ npm run test
 
 ---
 
+## WBS
+<img width="1168" height="1207" alt="image" src="https://github.com/user-attachments/assets/aa46a80c-6f01-4638-b03a-46e5d7227808" />
+
+
+
+
 ## 📚 API 문서
 
 각 서비스는 Swagger UI를 통해 API 문서를 제공합니다.
