@@ -1,16 +1,21 @@
 package com.team3.memberservice.service;
 
-import com.amuraedo.modulecommon.dto.response.ApiResponse;
-import com.amuraedo.modulecommon.util.JwtUtil;
 import com.team3.memberservice.domain.Member;
 import com.team3.memberservice.dto.request.LoginDTO;
 import com.team3.memberservice.dto.request.SignupDTO;
+import com.team3.memberservice.dto.response.ApiResponse;
 import com.team3.memberservice.repository.MemberRepository;
+import com.team3.memberservice.util.JwtUtil;
+import com.team3.memberservice.util.RedisKeyUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.concurrent.TimeUnit;
 
 
 @Service
@@ -20,6 +25,7 @@ public class AuthService {
     private final JwtUtil jwtUtil;
     private final PasswordEncoder passwordEncoder;
     private final MemberRepository memberRepository;
+    private final StringRedisTemplate redisTemplate;
 
     @Transactional
     public ApiResponse<?> createUser(SignupDTO signupDTO){
@@ -41,13 +47,10 @@ public class AuthService {
         return ApiResponse.success(accessToken);
     }
 
-    public ApiResponse<?> login(LoginDTO loginDTO) {
-// 1. 아이디 검증 (없으면 에러)
+    public ApiResponse<String> login(LoginDTO loginDTO) {
         Member member = memberRepository.findMemberByUsername(loginDTO.id())
                 .orElseThrow(() -> new IllegalArgumentException("가입되지 않은 아이디입니다."));
-        // 혹은 new CustomException(ErrorCode.MEMBER_NOT_FOUND)
 
-        // 2. ⭐ 비밀번호 검증 (반드시 matches 사용!)
         if (!passwordEncoder.matches(loginDTO.password(), member.getPassword())) {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
@@ -56,6 +59,19 @@ public class AuthService {
         String accessToken = jwtUtil.createToken(member.getUserId(), String.valueOf(member.getRole()));
 
         return ApiResponse.success(accessToken);
+    }
+
+    public boolean logout(String accessToken) {
+        String token = accessToken.replace("Bearer ", "");
+        Long expiration = jwtUtil.getExpiration(token);
+
+        if (expiration > 0) {
+            String key = RedisKeyUtil.getBlackListKey(token);
+            redisTemplate.opsForValue()
+                    .set(key, "logout", expiration, TimeUnit.MILLISECONDS);
+        }
+
+        return true;
     }
 
 }
