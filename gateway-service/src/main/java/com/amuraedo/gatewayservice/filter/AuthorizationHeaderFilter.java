@@ -1,8 +1,7 @@
 package com.amuraedo.gatewayservice.filter;
 
 import com.amuraedo.gatewayservice.util.GatewayRedisUtil;
-import com.amuraedo.modulecommon.util.JwtUtil;
-import lombok.RequiredArgsConstructor;
+import com.amuraedo.gatewayservice.util.JwtUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilter;

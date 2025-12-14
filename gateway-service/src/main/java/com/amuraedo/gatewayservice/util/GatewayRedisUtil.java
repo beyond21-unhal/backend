@@ -1,6 +1,5 @@
 package com.amuraedo.gatewayservice.util;
 
-import com.amuraedo.modulecommon.util.RedisKeyUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.ReactiveStringRedisTemplate;
 import org.springframework.stereotype.Component;
