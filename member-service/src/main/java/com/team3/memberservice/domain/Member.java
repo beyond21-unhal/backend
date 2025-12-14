@@ -1,7 +1,7 @@
 package com.team3.memberservice.domain;
 
-import com.amuraedo.modulecommon.entity.BaseEntity;
-import com.team3.memberservice.dto.request.SignupDTO;
+
+import com.team3.memberservice.common.BaseEntity;
 import com.team3.memberservice.enums.UserRole;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
