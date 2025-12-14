@@ -1,7 +1,7 @@
 package com.team3.memberservice.service;
 
-import com.amuraedo.modulecommon.dto.response.ApiResponse;
 import com.team3.memberservice.domain.Member;
+import com.team3.memberservice.dto.response.ApiResponse;
 import com.team3.memberservice.dto.response.UserInfoDTO;
 import com.team3.memberservice.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
