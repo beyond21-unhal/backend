@@ -169,7 +169,23 @@
 
 ---
 
+## 📜 설계 문서
+
+### DDD 설계 문서
+<img width="569" height="373" alt="image" src="https://github.com/user-attachments/assets/5693f664-8f75-4b86-a9e1-15130a4a35c6" />
+
+### 요구사항 명세서
+<img width="1157" height="760" alt="image" src="https://github.com/user-attachments/assets/c5fecdee-0d21-4716-9f11-43c91992c4c6" />
+
+### ERD
+<img width="800" alt="image" src="https://github.com/user-attachments/assets/bb6d7eb7-ad05-47ac-a596-f0787786a228" />
+
+---
+
 ## 🏗 시스템 아키텍처
+
+### MSA 구조도
+<img width="669" alt="image" src="https://github.com/user-attachments/assets/c407bac1-6474-4d25-9fe1-7f77b1a26f48" />
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
