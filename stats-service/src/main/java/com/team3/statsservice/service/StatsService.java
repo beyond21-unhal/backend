@@ -30,18 +30,8 @@ public class StatsService {
         LocalDate lastWeekStart = getLastWeekStart();
         LocalDate lastWeekEnd = getLastWeekEnd();
 
-        // exception : 이미 지난 주 통계가 있는지 확인
-        if (statsRepository.existsByUserIdAndStartDate(userId, lastWeekStart)) {
-            throw new IllegalStateException("이미 지난 주 통계가 존재합니다.");
-        }
-
         WeeklyStatsDTO request = new WeeklyStatsDTO(userId, lastWeekStart, lastWeekEnd);
         WeeklyStatsResponseDTO summary = statsClient.getWeeklyStats(request);
-
-        // exception : 지난 주 통계가 존재하는지 확인
-        if (summary == null) {
-            throw new IllegalStateException("지난 주 통계를 조회하지 못했습니다.");
-        }
 
         Stats stats = Stats.builder()
                 .userId(userId)
