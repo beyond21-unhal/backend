@@ -305,6 +305,10 @@ npm run test
 
 각 서비스는 Swagger UI를 통해 API 문서를 제공합니다.
 
+API 명세서 : [API 명세서.pdf](https://github.com/user-attachments/files/24150256/API.pdf)
+
+
+
 ### 주요 API 엔드포인트
 
 #### 인증
