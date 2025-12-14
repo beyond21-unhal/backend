@@ -1,6 +1,7 @@
 package com.team3.statsservice.repository;
 
 import com.team3.statsservice.domian.Stats;
+import com.team3.statsservice.dto.response.StatsViewDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDate;
@@ -9,7 +10,7 @@ import java.util.Optional;
 
 public interface StatsRepository extends JpaRepository<Stats, Long> {
 
-    List<Stats> findByUserId(Long userId);
+    List<StatsViewDTO> findByUserId(Long userId);
 
     List<Stats> findByStartDateOrderByTotalDurationDesc(LocalDate startDate);
 

@@ -1,20 +1,26 @@
 package com.team3.statsservice.service;
 
+import com.team3.statsservice.client.StatsClient;
 import com.team3.statsservice.domian.Stats;
+import com.team3.statsservice.dto.request.WeeklyStatsDTO;
 import com.team3.statsservice.dto.response.CalorieRankingDto;
+import com.team3.statsservice.dto.response.StatsViewDTO;
 import com.team3.statsservice.dto.response.TimeRankingDto;
+import com.team3.statsservice.dto.response.WeeklyStatsResponseDTO;
 import com.team3.statsservice.repository.StatsRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.time.LocalDate;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 class StatsServiceTest {
@@ -24,6 +30,9 @@ class StatsServiceTest {
 
     @Autowired
     private StatsRepository statsRepository;
+
+    @MockitoBean
+    private StatsClient statsClient;
 
     @BeforeEach
     void setUp() {
@@ -38,8 +47,19 @@ class StatsServiceTest {
         Integer totalDuration = 60;
         Integer totalCalories = 500;
 
+        WeeklyStatsResponseDTO summary = new WeeklyStatsResponseDTO(
+                userId,
+                LocalDate.now().minusWeeks(1),
+                LocalDate.now(),
+                totalDuration,
+                totalCalories
+        );
+
+        when(statsClient.getWeeklyStats(any(WeeklyStatsDTO.class)))
+                .thenReturn(summary);
+
         // when
-        statsService.createLastWeekStats(userId, totalDuration, totalCalories);
+        statsService.createLastWeekStats(userId);
 
         // then
         Stats stats = statsRepository.findTopByUserIdOrderByStartDateDesc(userId)
@@ -57,14 +77,32 @@ class StatsServiceTest {
     void getStatsByUserId() {
         // given
         Long userId = 1L;
-        statsService.createLastWeekStats(userId, 30, 300);
+
+        WeeklyStatsResponseDTO summary = new WeeklyStatsResponseDTO(
+                userId,
+                LocalDate.now().minusWeeks(1),
+                LocalDate.now(),
+                30,
+                300
+        );
+
+        when(statsClient.getWeeklyStats(any(WeeklyStatsDTO.class)))
+                .thenReturn(summary);
+
+        statsService.createLastWeekStats(userId);
 
         // when
-        List<Stats> stats = statsService.getStatsByUserId(userId);
+        List<StatsViewDTO> stats = statsService.getStatsByUserId(userId);
 
         // then
         assertFalse(stats.isEmpty(), "해당 아이디의 통계가 존재하지 않습니다.");
-        assertEquals(userId, stats.get(0).getUserId());
+
+        StatsViewDTO first = stats.get(0);
+
+        assertNotNull(first.startDate());
+        assertNotNull(first.endDate());
+        assertEquals(30, first.totalDuration());
+        assertEquals(300, first.totalCalories());
     }
 
     @DisplayName("지난 주 운동량 랭킹 조회 테스트")
@@ -75,9 +113,15 @@ class StatsServiceTest {
         Long user2 = 2L;
         Long user3 = 3L;
 
-        statsService.createLastWeekStats(user1, 30, 300);
-        statsService.createLastWeekStats(user2, 60, 500);
-        statsService.createLastWeekStats(user3, 45, 400);
+        WeeklyStatsResponseDTO summary1 = new WeeklyStatsResponseDTO(user1, null, null, 30, 300); // user1: 30분
+        WeeklyStatsResponseDTO summary2 = new WeeklyStatsResponseDTO(user2, null, null, 60, 500); // user2: 60분
+        WeeklyStatsResponseDTO summary3 = new WeeklyStatsResponseDTO(user3, null, null, 45, 400); // user3: 45분
+
+        when(statsClient.getWeeklyStats(any(WeeklyStatsDTO.class))).thenReturn(summary1, summary2, summary3);
+
+        statsService.createLastWeekStats(user1);
+        statsService.createLastWeekStats(user2);
+        statsService.createLastWeekStats(user3);
 
         // when
         List<TimeRankingDto> ranking = statsService.getLastWeekTimeRanking();
@@ -106,9 +150,15 @@ class StatsServiceTest {
         Long user2 = 2L;
         Long user3 = 3L;
 
-        statsService.createLastWeekStats(user1, 30, 300);
-        statsService.createLastWeekStats(user2, 60, 500);
-        statsService.createLastWeekStats(user3, 45, 400);
+        WeeklyStatsResponseDTO summary1 = new WeeklyStatsResponseDTO(user1, null, null, 30, 300); // user1: 30분
+        WeeklyStatsResponseDTO summary2 = new WeeklyStatsResponseDTO(user2, null, null, 60, 500); // user2: 60분
+        WeeklyStatsResponseDTO summary3 = new WeeklyStatsResponseDTO(user3, null, null, 45, 400); // user3: 45분
+
+        when(statsClient.getWeeklyStats(any(WeeklyStatsDTO.class))).thenReturn(summary1, summary2, summary3);
+
+        statsService.createLastWeekStats(user1);
+        statsService.createLastWeekStats(user2);
+        statsService.createLastWeekStats(user3);
 
         // when
         List<CalorieRankingDto> ranking = statsService.getLastWeekCalorieRanking();
@@ -137,9 +187,15 @@ class StatsServiceTest {
         Long user2 = 2L;
         Long user3 = 3L;
 
-        statsService.createLastWeekStats(user1, 30, 300);
-        statsService.createLastWeekStats(user2, 60, 500);
-        statsService.createLastWeekStats(user3, 45, 400);
+        WeeklyStatsResponseDTO summary1 = new WeeklyStatsResponseDTO(user1, null, null, 30, 300); // user1: 30분
+        WeeklyStatsResponseDTO summary2 = new WeeklyStatsResponseDTO(user2, null, null, 60, 500); // user2: 60분
+        WeeklyStatsResponseDTO summary3 = new WeeklyStatsResponseDTO(user3, null, null, 45, 400); // user3: 45분
+
+        when(statsClient.getWeeklyStats(any(WeeklyStatsDTO.class))).thenReturn(summary1, summary2, summary3);
+
+        statsService.createLastWeekStats(user1);
+        statsService.createLastWeekStats(user2);
+        statsService.createLastWeekStats(user3);
 
         // when
         List<TimeRankingDto> ranking = statsService.getTimeRankingByDate(LocalDate.now().minusDays(7));
@@ -168,9 +224,15 @@ class StatsServiceTest {
         Long user2 = 2L;
         Long user3 = 3L;
 
-        statsService.createLastWeekStats(user1, 30, 300);
-        statsService.createLastWeekStats(user2, 60, 500);
-        statsService.createLastWeekStats(user3, 45, 400);
+        WeeklyStatsResponseDTO summary1 = new WeeklyStatsResponseDTO(user1, null, null, 30, 300); // user1: 30분
+        WeeklyStatsResponseDTO summary2 = new WeeklyStatsResponseDTO(user2, null, null, 60, 500); // user2: 60분
+        WeeklyStatsResponseDTO summary3 = new WeeklyStatsResponseDTO(user3, null, null, 45, 400); // user3: 45분
+
+        when(statsClient.getWeeklyStats(any(WeeklyStatsDTO.class))).thenReturn(summary1, summary2, summary3);
+
+        statsService.createLastWeekStats(user1);
+        statsService.createLastWeekStats(user2);
+        statsService.createLastWeekStats(user3);
 
         // when
         List<CalorieRankingDto> ranking = statsService.getCalorieRankingByDate(LocalDate.now().minusDays(7));

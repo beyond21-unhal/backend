@@ -95,4 +95,7 @@ public class WorkoutPlan {
         this.workoutplanId = workoutId;
     }
 
+    public void complete() {
+        this.isCompleted = true;
+    }
 }

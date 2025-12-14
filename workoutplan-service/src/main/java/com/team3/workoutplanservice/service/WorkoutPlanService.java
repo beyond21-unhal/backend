@@ -1,7 +1,11 @@
 package com.team3.workoutplanservice.service;
 
 import com.team3.workoutplanservice.domain.WorkoutPlan;
+import com.team3.workoutplanservice.dto.request.WeeklyRequestDTO;
+import com.team3.workoutplanservice.dto.request.WeeklyStatsDTO;
 import com.team3.workoutplanservice.dto.request.WorkoutPlanRequest;
+import com.team3.workoutplanservice.dto.response.WeeklyStatsResponseDTO;
+import com.team3.workoutplanservice.dto.response.WeeklySummaryDTO;
 import com.team3.workoutplanservice.repository.WorkoutPlanRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -51,6 +55,14 @@ public class WorkoutPlanService {
         );
     }
 
+    /* 운동 완료 상태 수정 */
+    @Transactional
+    public void completeWorkout(Long userId, LocalDate date) {
+        WorkoutPlan plan = findByUserIdAndDate(userId, date);
+
+        plan.complete(); // isCompleted = true 로 변경
+    }
+
     /** 날짜 기반 삭제 */
     @Transactional
     public void deleteByDate(Long userId, LocalDate date) {
@@ -61,5 +73,51 @@ public class WorkoutPlanService {
     /** 기존 리스트 조회 (원한다면 유지) */
     public List<WorkoutPlan> findWorkoutPlans(Long userId) {
         return workoutPlanRepository.findByUserId(userId);
+    }
+
+    public WeeklySummaryDTO getWeeklyValue(WeeklyRequestDTO dto) {
+        List<WorkoutPlan> allPlans = workoutPlanRepository.findAllByDateBetweenAndUserId(dto.startDate(), dto.endDate(), dto.userId());
+        int plannedAmount = 0;
+        int achievedAmount = 0;
+
+        for (WorkoutPlan plan : allPlans) {
+            plannedAmount+=plan.getBurnedCalories();
+            if(plan.isCompleted()) {
+                achievedAmount+=plan.getBurnedCalories();
+            }
+
+        }
+        return WeeklySummaryDTO.builder()
+                .userId(dto.userId())
+                .startDate(dto.startDate())
+                .endDate(dto.endDate())
+                .plannedAmount(plannedAmount)
+                .achievedAmount(achievedAmount)
+                .build();
+    }
+
+    public WeeklyStatsResponseDTO getWeeklyRanking(WeeklyStatsDTO dto) {
+
+        List<WorkoutPlan> allPlans = workoutPlanRepository.findAllByDateBetweenAndUserId(dto.startDate(), dto.endDate(), dto.userId());
+        int totalCalories = 0;
+        int totalDuration = 0;
+
+        for (WorkoutPlan plan : allPlans) {
+
+            if(plan.isCompleted()) {
+                totalCalories+=plan.getBurnedCalories();
+                totalDuration+=plan.getWorkoutRecord();
+            }
+
+        }
+
+        return WeeklyStatsResponseDTO.builder()
+                .userId(dto.userId())
+                .startDate(dto.startDate())
+                .endDate(dto.endDate())
+                .totalCalories(totalCalories)
+                .totalDuration(totalDuration)
+                .build();
+
     }
 }

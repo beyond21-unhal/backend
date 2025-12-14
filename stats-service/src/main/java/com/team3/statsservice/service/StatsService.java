@@ -1,8 +1,12 @@
 package com.team3.statsservice.service;
 
+import com.team3.statsservice.client.StatsClient;
 import com.team3.statsservice.domian.Stats;
+import com.team3.statsservice.dto.request.WeeklyStatsDTO;
 import com.team3.statsservice.dto.response.CalorieRankingDto;
+import com.team3.statsservice.dto.response.StatsViewDTO;
 import com.team3.statsservice.dto.response.TimeRankingDto;
+import com.team3.statsservice.dto.response.WeeklyStatsResponseDTO;
 import com.team3.statsservice.repository.StatsRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,29 +23,28 @@ import java.util.List;
 public class StatsService {
 
     private final StatsRepository statsRepository;
+    private final StatsClient statsClient;
 
     @Transactional
-    public void createLastWeekStats(Long userId, Integer totalDuration, Integer totalCalories) {
+    public void createLastWeekStats(Long userId) {
         LocalDate lastWeekStart = getLastWeekStart();
         LocalDate lastWeekEnd = getLastWeekEnd();
 
-        // 이미 지난 주 랭킹이 있는지 확인
-        if (statsRepository.existsByUserIdAndStartDate(userId, lastWeekStart)) {
-            throw new IllegalStateException("이미 지난 주 통계가 존재합니다.");
-        }
+        WeeklyStatsDTO request = new WeeklyStatsDTO(userId, lastWeekStart, lastWeekEnd);
+        WeeklyStatsResponseDTO summary = statsClient.getWeeklyStats(request);
 
         Stats stats = Stats.builder()
                 .userId(userId)
                 .startDate(lastWeekStart)
                 .endDate(lastWeekEnd)
-                .totalDuration(totalDuration)
-                .totalCalories(totalCalories)
+                .totalDuration(summary.totalDuration())
+                .totalCalories(summary.totalCalories())
                 .build();
 
         statsRepository.save(stats);
     }
 
-    public List<Stats> getStatsByUserId(Long userId) {
+    public List<StatsViewDTO> getStatsByUserId(Long userId) {
         return statsRepository.findByUserId(userId);
     }
 
@@ -100,8 +103,8 @@ public class StatsService {
             }
 
             result.add(new TimeRankingDto(
-                    stats.getUserId(),
                     currentRank,
+                    stats.getUserId(),
                     value
             ));
         }
@@ -128,8 +131,8 @@ public class StatsService {
             }
 
             result.add(new CalorieRankingDto(
-                    stats.getUserId(),
                     currentRank,
+                    stats.getUserId(),
                     value
             ));
         }
