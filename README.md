@@ -301,6 +301,12 @@ npm run test
 
 ---
 
+## WBS
+<img width="1168" height="1207" alt="image" src="https://github.com/user-attachments/assets/aa46a80c-6f01-4638-b03a-46e5d7227808" />
+
+
+
+
 ## 📚 API 문서
 
 각 서비스는 Swagger UI를 통해 API 문서를 제공합니다.
@@ -349,13 +355,27 @@ POST /answer                  - 답변 등록 (트레이너)
 
 ---
 
+## 🧪 테스트 케이스
+
+* **Auth Service**
+    * 회원가입 및 로그인 시나리오 검증 (성공, 중복 ID, 비밀번호 불일치 등 예외 처리)
+    * JWT 발급 및 Redis Blacklist를 이용한 로그아웃 로직 검증
+* **Community Service (Feed & Question)**
+    * 게시글 및 질문의 CRUD 기능 정상 동작 확인
+    * 작성자 권한 검증 및 답변 상태 변경에 따른 수정/삭제 제약 조건 테스트
+    * 키워드 검색 및 내 질문 조회 기능 검증
+* **Data Analysis (Stats & Report)**
+    * 사용자별 주간/월간 리포트 생성 및 조회 로직 검증
+    * 날짜별 운동량 및 칼로리 소모량 랭킹 집계 정확도 테스트
+    * 통계 데이터 생성 및 날짜 기반 필터링 기능 확인
+* **etc..**
+
 ## 📁 프로젝트 구조
 
 ```
 woonhal/
 ├── eureka-server/          # Service Discovery
 ├── gateway-service/        # API Gateway
-├── module-common/          # 공통 모듈 (JWT, BaseEntity 등)
 ├── member-service/         # 회원 관리
 ├── feed-service/           # 소셜 피드
 ├── qna-service/            # Q&A 커뮤니티
@@ -364,15 +384,6 @@ woonhal/
 ├── notification-service/   # 알림
 ├── dietplan-service/       # 식단 관리
 ├── workoutplan-service/    # 운동 계획
-└── frontend/               # React 프론트엔드
-    ├── src/
-    │   ├── api/            # API 호출 모듈
-    │   ├── components/     # 재사용 컴포넌트
-    │   ├── pages/          # 페이지 컴포넌트
-    │   ├── store/          # Zustand 상태 관리
-    │   ├── hooks/          # 커스텀 훅
-    │   └── utils/          # 유틸리티 함수
-    └── package.json
 ```
 
 ---
