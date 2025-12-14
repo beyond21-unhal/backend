@@ -48,12 +48,9 @@ public class AuthService {
     }
 
     public ApiResponse<String> login(LoginDTO loginDTO) {
-// 1. 아이디 검증 (없으면 에러)
         Member member = memberRepository.findMemberByUsername(loginDTO.id())
                 .orElseThrow(() -> new IllegalArgumentException("가입되지 않은 아이디입니다."));
-        // 혹은 new CustomException(ErrorCode.MEMBER_NOT_FOUND)
 
-        // 2. ⭐ 비밀번호 검증 (반드시 matches 사용!)
         if (!passwordEncoder.matches(loginDTO.password(), member.getPassword())) {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
@@ -64,9 +61,10 @@ public class AuthService {
         return ApiResponse.success(accessToken);
     }
 
-    @Transactional
-    public boolean logout(String token){
+    public boolean logout(String accessToken) {
+        String token = accessToken.replace("Bearer ", "");
         Long expiration = jwtUtil.getExpiration(token);
+
         if (expiration > 0) {
             String key = RedisKeyUtil.getBlackListKey(token);
             redisTemplate.opsForValue()
