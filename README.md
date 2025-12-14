@@ -1,258 +1,437 @@
-# Back-end
-## 공통 사항
-- 단위 테스트 작성(service 메소드 별로) : Junit 사용
-- 다른 사람이 알아보기 쉽도록 주석처리해야 합니다.
-    - javadoc 형식 https://jake-seo-dev.tistory.com/59
-- 지라 티켓 생성하고 작업 시작합시다.
-- 사용 내역 같은 로그 확인할 수 있도록 잘 남겨야 합니다.
 
-<br>
 
-## 개발규칙
 
-### ⭐ Code Convention
+## 👥 Team 𝒜𝓂𝓊𝓇𝒶𝑒𝒹𝑜 팀원 소개
+
+
+
+### 정규원
+- GitHub: https://github.com/Gyuwon-Jung
+
+### 김성은
+- GitHub: https://github.com/rlatjddms
+
+### 김윤경
+- GitHub: https://github.com/yk5095
+
+### 이경민
+- GitHub: https://github.com/LKM1027
+
+### 임재열
+- GitHub: https://github.com/Jae-yeol1
+
+
+# 🏋️‍♀️ 운할 (Woonhal) - What if I hadn't skipped my workout?
+
+<div align="center">
+
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5.8-6DB33F?style=for-the-badge&logo=springboot&logoColor=white)
+![React](https://img.shields.io/badge/React-19.2.0-61DAFB?style=for-the-badge&logo=react&logoColor=black)
+![Java](https://img.shields.io/badge/Java-17-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)
+![Gradle](https://img.shields.io/badge/Gradle-02303A?style=for-the-badge&logo=gradle&logoColor=white)
+
+### 🎯 "당신의 '운동할걸…'을 '운동했다!'로 바꿔드립니다."
+
+**후회마저 기록하는 역발상 피트니스 플래너**
+
+운동하지 않은 날의 '기회비용'을 기록하는 심리 기반 역발상 피트니스 플래너
+
+[서비스 소개](#-서비스-소개) • [핵심 기능](#-핵심-기능) • [기술 스택](#-기술-스택) • [시작하기](#-시작하기) • [API 문서](#-api-문서)
+
+</div>
 
 ---
 
-<details>
-<summary style = " font-size:1.3em;">Naming</summary>
-<div markdown="1">
+## 📖 서비스 소개
 
-- 패키지 : 언더스코어(`_`)나 대문자를 섞지 않고 소문자를 사용하여 작성합니다.
-- 클래스 : 클래스 이름은 명사나 명사절로 지으며, 대문자 카멜표기법(Upper camel case)을 사용합니다.
-- 메서드 : 메서드 이름은 동사/전치사로 시작하며, 소문자 카멜표기법(Lower camel case)를 사용합니다. 의도가 전달되도록 최대한 간결하게 표현합니다.
-- 변수 : 소문자 카멜표기법(Lower camel case)를 사용합니다.
-- ENUM, 상수 : 상태를 가지지 않는 자료형이면서 `static final`로 선언되어 있는 필드일 때를 상수로 간주하며, 대문자와 언더스코어(Upper_snake_case)로 구성합니다.
-- DB 테이블: 소문자와 언더스코어로(lower_snake_case) 구성합니다.
-- 컬렉션(Collection): **복수형**을 사용하거나 **컬렉션을 명시합니다**. (Ex. userList, users, userMap)
-- LocalDateTime: 접미사에 **Date**를 붙입니다.
+> "기존 헬스 앱이 '신체의 움직임'을 관리했다면, 운할은 움직이지 못하게 만드는 '마음의 저항'을 관리합니다."
 
+**운할(Woonhal)**은 "운동할걸.."이라는 후회에서 시작된 **역발상 피트니스 플래너**입니다.
 
-</div>
-</details>
-<details>
-<summary style = " font-size:1.3em;">Comment</summary>
-<div markdown="1">
+기존 운동 앱들이 '성취'만 기록하는 것과 달리, 운할은 **운동하지 않은 날의 기회비용**을 데이터로 시각화하여 사용자에게 강력한 동기를 부여합니다.
 
-### 1. 한줄 주석은 // 를 사용한다.
+### 💡 왜 '안 한 날'을 기록하는가?
 
-```java
-// 하이~
-```
-
-### 2. Bracket 사용 시 내부에 주석을 작성한다.
-
-```java
-/*
-   하이~!
-*/
-```
-
-### 3. 주요 함수에 대한 주석
-
-```java
-/*
- * 입력 : 인덱스:Long
- * 기능 : 유저 인덱스로 db에 접근해 유저 객체를 반환한다
- * 출력 : 유저:User
- */
-public User getUser(Long idx)
-```
-
-</div>
-</details>
-<details>
-<summary style = " font-size:1.3em;">Import</summary>
-<div markdown="1">
-
-### 1. 소스파일당 1개의 탑레벨 클래스를 담기
-
-> 탑레벨 클래스(Top level class)는 소스 파일에 1개만 존재해야 한다. ( 탑레벨 클래스 선언의 컴파일타임 에러 체크에 대해서는 [Java Language Specification 7.6](http://docs.oracle.com/javase/specs/jls/se7/html/jls-7.html#jls-7.6) 참조 )
-
-### 2. static import에만 와일드 카드 허용
-
-> 클래스를 import할때는 와일드카드(`*`) 없이 모든 클래스명을 다 쓴다. static import에서는 와일드카드를 허용한다.
-
-### 3. 애너테이션 선언 후 새줄 사용
-
-> 클래스, 인터페이스, 메서드, 생성자에 붙는 애너테이션은 선언 후 새줄을 사용한다. 이 위치에서도 파라미터가 없는 애너테이션 1개는 같은 줄에 선언할 수 있다.
-
-
-### 4. 배열에서 대괄호는 타입 뒤에 선언
-
-> 배열 선언에 오는 대괄호(`[]`)는 타입의 바로 뒤에 붙인다. 변수명 뒤에 붙이지 않는다.
-
-### 5. `long`형 값의 마지막에 `L`붙이기
-
-> long형의 숫자에는 마지막에 대문자 'L’을 붙인다. 소문자 'l’보다 숫자 '1’과의 차이가 커서 가독성이 높아진다.
-
-</div>
-</details>
-<details>
-<summary style = " font-size:1.3em;">URL</summary>
-<div markdown="1">
-
-### URL
-
-URL은 RESTful API 설계 가이드에 따라 작성합니다.
-
-- HTTP Method로 구분할 수 있는 get, put 등의 행위는 url에 표현하지 않습니다.
-- 마지막에 `/` 를 포함하지 않습니다.
-- `_` 대신 `-`를 사용합니다.
-- 소문자를 사용합니다.
-- 확장자는 포함하지 않습니다.
-
-
-</div>
-</details>
-
-<br>
-
-### ☀️ Commit Convention
+| 문제점 | 운할의 해결책 |
+|--------|--------------|
+| **생존 편향** - 대부분의 앱은 '성취'만 기록하여 작심삼일러의 회피 심리 유발 | 공백기도 데이터화하여 지속적인 방문 유도 |
+| **동기 부여 한계** - "운동하면 건강해져요"는 행동 유도에 약함 | **손실 회피 심리** 활용 - "오늘 쉬면 치킨 한 마리 칼로리를 태울 기회를 잃습니다" |
+| **휘발성 후회** - "운동할걸.."이라는 감정은 금방 사라짐 | **감정의 데이터화** - 후회를 '놓친 칼로리', '근성장 기회비용'으로 박제 |
 
 ---
 
-<details>
-<summary style = " font-size:1.3em;">Rules</summary>
-<div markdown="1">
+## 🎯 핵심 가치
 
-### 1. Git Flow
-
-작업 시작 시 선행되어야 할 작업은 다음과 같습니다.
-
-
-> 1. issue를 생성합니다.
-> 2. feature branch를 생성합니다.
-> 3. add → commit → push → pull request 를 진행합니다.
-> 4. pull request를 develop branch로 merge 합니다.
-> 5. 이전에 merge된 작업이 있을 경우 다른 branch에서 진행하던 작업에 merge된 작업을 pull 받아옵니다.
-> 6. 종료된 issue와 pull request의 label을 관리합니다.
-
-### 2. IntelliJ
-
-IntelliJ로 작업을 진행하는 경우, 작업 시작 시 선행되어야 할 작업은 다음과 같습니다.
-
-> 1. 깃허브 프로젝트 저장소에서 issue를 생성합니다.
-> 2. IntelliJ의 git 탭 → local develop branch 우클릭 → update 를 진행합니다.
-> 3. IntelliJ의 git 탭 → local develop branch 우클릭 → new branch from ‘develop’ 을 진행합니다.
-> 4. 생성한 issue 번호에 맞는 feature branch를 생성함과 동시에 feature branch로 checkout 합니다.
-> 5. feature branch에서 issue 단위 작업을 진행합니다.
-> 6. 작업 완료 후, add → commit을 진행합니다.
-> 7. push 하기 전, remote develop branch의 변경 사항을 확인하기 위해 2번 과정을 다시 수행합니다.
-> 8. IntelliJ의 git 탭 → local develop branch 우클릭 → merge ‘develop’ into ‘4번 과정에서 생성한 feature branch’ 를 진행합니다.
-> 9. 만약 코드 충돌이 발생하였다면, IntelliJ에서 코드 충돌을 해결하고 add → commit을 진행합니다.
-> 10. push → pull request (feature branch → develop branch) 를 진행합니다.
-> 11. pull request가 작성되면 작성자 이외의 다른 팀원이 code review를 진행합니다.
-> 12. 최소 한 명 이상의 팀원에게 code review와 approve를 받은 경우 pull request 생성자가 merge를 진행합니다.
-> 13. 종료된 issue와 pull request의 label과 milestone을 관리합니다.
-
-
-### 3. Etc
-
-준수해야 할 규칙은 다음과 같습니다.
-
-> 1. develop branch에서의 작업은 원칙적으로 금지합니다. 단, README 작성은 develop branch에서 수행합니다.
-> 2. commit, push, merge, pull request 등 모든 작업은 오류 없이 정상적으로 실행되는 지 확인 후 수행합니다.
-
-</div>
-</details>
-
-<details>
-<summary style = " font-size:1.3em;">Branch</summary>
-<div markdown="1">
-
-### 1. Branch
-
-branch는 작업 단위 & 기능 단위로 생성하며 이는 issue를 기반으로 합니다.
-
-### 2. Branch Naming Rule
-
-branch를 생성하기 전 issue를 먼저 작성합니다. issue 작성 후 생성되는 번호와 domain 명을 조합하여 branch의 이름을 결정합니다. `<Prefix>/<Issue_Number>-<Domain>` 의 양식을 준수합니다.
-
-### 3. Prefix
-
-- `main` : 개발이 완료된 산출물이 저장될 공간입니다.
-- `develop`: feature branch에서 구현된 기능들이 merge될 default branch 입니다.
-- `feature`: 기능을 개발하는 branch 입니다. 이슈 별 & 작업 별로 branch를 생성 후 기능을 개발하며 naming은 소문자를 사용합니다.
-
-### 4. Domain
-
-- `user`, `home`, `error`, `config`
-
-
-### 5. Etc
-
-- `feature/7-user`, `feature/5-config`
-
-
-</div>
-</details>
-
-<details>
-<summary style = " font-size:1.3em;">Issue</summary>
-<div markdown="1">
-
-### 1. Issue
-
-작업 시작 전 issue 생성이 선행되어야 합니다. issue 는 작업 단위 & 기능 단위로 생성하며 생성 후 표시되는 issue number 를 참조하여 branch 이름과 commit message를 작성합니다.
-
-issue 제목에는 기능의 대표적인 설명을 적고 내용에는 세부적인 내용 및 작업 진행 상황을 작성합니다.
-
-issue 생성 시 github 오른편의 assignee, label을 적용합니다. assignee는 해당 issue 담당자, label은 작업 내용을 추가합니다.
-
-### 2. Issue Naming Rule
-
-`[<Prefix>] <Description>` 의 양식을 준수하되, prefix는 commit message convention을 따릅니다.
-
-### 3. Etc
-
-<aside>
-[feat] 약속 잡기 API 구현
-<br/>[chore] spring data JPA 의존성 추가
-
-</aside>
+| 키워드 | 설명 |
+|--------|------|
+| 📉 **역발상 기록** | 성취뿐만 아니라 실패(Inaction)와 '포기'까지 기록하여 데이터의 연속성 확보 |
+| 💸 **손실의 시각화** | 운동을 건너뛴 대가(기회비용)를 수치로 환산하여 현실 자각 유도 |
+| 🛡 **심리적 안전지대** | "나만 안 한 게 아니다"는 위로를 주는 익명 실패 공유 커뮤니티 |
+| 🔄 **회복 탄력성** | 죄책감에 매몰되지 않도록, 다음 주 계획으로 손실을 만회하는 재도전 루틴 설계 |
 
 ---
 
+## 👥 타겟 페르소나
+
+> "마음만은 태릉인, 몸은 침대 위인 당신을 위해"
+
+- **합리화 대장** - "오늘 야근했으니까.." 핑계를 찾는 사용자에게 팩트(데이터)로 반박해줄 툴이 필요한 사람
+- **유리멘탈** - 하루만 빠져도 "이번 생은 망했어" 포기하는 완벽주의자에게, "실패도 과정임"을 보여주는 기록이 필요한 사람
+- **오운완 박탈감형** - SNS의 완벽한 몸매 자랑에 지쳐, 현실적인 사람들의 솔직한 실패담으로 위로받고 싶은 사람
+
+---
+
+## ✨ 핵심 기능
+
+### 📅 기회비용 플래너
+- 주간 운동 계획 수립 및 수행 여부 체크 (✅/❌)
+- 미달성 체크 시, "오늘 놓친 운동 효과"가 즉시 계산되어 표시
+- 운동 종류, 유산소/무산소, 난이도, 운동 부위 선택
+
+### 📊 What-if 시뮬레이터
+- "운동을 안 한 날"의 데이터를 기반으로 가정 시나리오 분석
+- **실제 소모 칼로리 vs 계획대로 했다면 소모됐을 칼로리** 비교 차트
+- "1주일동안 운동을 이정도했다면 살은 2kg가 빠졌을 것" 등의 구체적 메시지
+
+### 📈 주간 리포트
+- 매주 지난주의 '성취'와 '손실'을 정산하는 리포트 발행
+- 데이터 기반의 목표 수정 유도
+- "이번 주는 3000kcal를 놓쳤으니, 다음 주는 강도를 높이자" 등의 피드백
+
+### 🏆 운동 통계 & 랭킹
+- 주간 운동 시간 및 칼로리 소모량 집계
+- 사용자 간 랭킹 시스템으로 경쟁 유도
+- 날짜별 통계 검색
+
+### 💬 Q&A 커뮤니티
+- 트레이너에게 질문 등록
+- 트레이너 전용 답변 시스템
+- 답변 등록 시 실시간 알림 발송
+
+### 📱 소셜 피드
+- 이미지 포함 게시글 작성
+- 제목, 내용, 사용자ID 기반 검색
+- 본인 게시글 수정/삭제
+
+### 🍽️ 식단 관리
+- 아침/점심/저녁/간식 식단 등록
+- 음식 종류 및 칼로리 기록
+- 식단 조회/수정/삭제
+
+### 🔔 실시간 알림
+- Q&A 답변 등록 알림
+- 읽음/미읽음 상태 관리
+
+---
+
+## 📊 시장 포지셔닝
+
+| 구분 | 기존 운동 앱 (플랜핏, 번핏, 삼성헬스) | 운할 (Woonhal) |
+|------|--------------------------------------|----------------|
+| **기록 대상** | 운동한 날 (Action) | 운동 안 한 날 (Inaction) 까지 포함 |
+| **동기 부여** | 성취감, 뱃지, 긍정 강화 | 손실 회피, 기회비용, 현실 자각 |
+| **주요 감정** | 뿌듯함, 자랑 | 아쉬움, 오기, 공감 |
+| **접근 방식** | 신체 관리 (Physical) | 심리/멘탈 관리 (Psychological) |
+
+---
+
+## 🛠 기술 스택
+
+### Backend
+| 기술 | 버전 | 설명 |
+|------|------|------|
+| Java | 17 | 프로그래밍 언어 |
+| Spring Boot | 3.5.8 | 애플리케이션 프레임워크 |
+| Spring Cloud Gateway | - | API Gateway |
+| Netflix Eureka | - | Service Discovery |
+| Spring Data JPA | - | ORM |
+| JWT | - | 인증 토큰 |
+| MinIO | - | 파일 저장소 |
+
+### Frontend
+| 기술 | 버전 | 설명 |
+|------|------|------|
+| React | 19.2.0 | UI 라이브러리 |
+| Vite | 7.2.4 | 빌드 도구 |
+| Zustand | 5.0.9 | 상태 관리 |
+| Axios | 1.13.2 | HTTP 클라이언트 |
+| Recharts | 3.5.1 | 데이터 시각화 |
+| Styled Components | 6.1.19 | CSS-in-JS |
+| React Router DOM | 7.10.1 | 라우팅 |
+
+### Testing
+| 기술 | 설명 |
+|------|------|
+| JUnit 5 | 백엔드 단위 테스트 |
+| Vitest | 프론트엔드 테스트 |
+| Testing Library | React 컴포넌트 테스트 |
+| Fast-check | Property-Based Testing |
+
+---
+
+## 📜 설계 문서
+
+### DDD 설계 문서
+<img width="1348" height="882" alt="image" src="https://github.com/user-attachments/assets/2d4abc69-29d0-4eea-bd6a-37244462bb4d" />
+
+### 요구사항 명세서
+<img width="1157" height="760" alt="image" src="https://github.com/user-attachments/assets/c5fecdee-0d21-4716-9f11-43c91992c4c6" />
+
+### ERD
+<img width="1078" height="625" alt="image" src="https://github.com/user-attachments/assets/cf69b393-2ca8-4cd8-bbed-c9afb9c692ba" />
+
+---
+
+## 🏗 시스템 아키텍처
+
+### MSA 구조도
+<img width="800" alt="Web_App_Reference_Architecture_1" src="https://github.com/user-attachments/assets/06e56dd2-0ae5-4189-945a-4274926bdcd1" />
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                        Frontend (React)                         │
+│                    http://localhost:5173                        │
+└─────────────────────────────┬───────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                    API Gateway Service                          │
+│                    http://localhost:8000                        │
+│              (JWT 인증 필터, 라우팅, CORS)                       │
+└─────────────────────────────┬───────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                    Eureka Server                                │
+│                    http://localhost:8761                        │
+│                  (Service Discovery)                            │
+└─────────────────────────────┬───────────────────────────────────┘
+                              │
+        ┌─────────────────────┼─────────────────────┐
+        │                     │                     │
+        ▼                     ▼                     ▼
+┌───────────────┐   ┌───────────────┐   ┌───────────────┐
+│ member-service│   │  feed-service │   │  qna-service  │
+│   :8081       │   │    :8082      │   │    :8083      │
+└───────────────┘   └───────────────┘   └───────────────┘
+        │                     │                     │
+        ▼                     ▼                     ▼
+┌───────────────┐   ┌───────────────┐   ┌───────────────┐
+│ stats-service │   │report-service │   │notification-  │
+│   :8084       │   │    :8085      │   │   service     │
+└───────────────┘   └───────────────┘   └───────────────┘
+        │                     │                     │
+        ▼                     ▼                     ▼
+┌───────────────┐   ┌───────────────┐   ┌───────────────┐
+│dietplan-      │   │workoutplan-   │   │    MinIO      │
+│  service      │   │   service     │   │ (File Storage)│
+└───────────────┘   └───────────────┘   └───────────────┘
+```
+
+### 마이크로서비스 구성
+
+| 서비스 | 포트 | 설명 |
+|--------|------|------|
+| eureka-server | 8761 | 서비스 디스커버리 |
+| gateway-service | 8000 | API Gateway |
+| member-service | 8081 | 회원 관리, 인증 |
+| feed-service | 8082 | 소셜 피드 |
+| qna-service | 8083 | Q&A 커뮤니티 |
+| stats-service | 8084 | 운동 통계, 랭킹 |
+| report-service | 8085 | What-if 분석 리포트 |
+| notification-service | 8086 | 알림 관리 |
+| dietplan-service | 8087 | 식단 관리 |
+| workoutplan-service | 8088 | 운동 계획 관리 |
+
+---
+
+## 🚀 시작하기
+
+### 사전 요구사항
+- Java 17+
+- Node.js 18+
+- Gradle 8+
+- Redis
+- MinIO (파일 저장소)
+
+### Backend 실행
+
+```bash
+# 1. 프로젝트 클론
+git clone https://github.com/your-repo/woonhal.git
+cd woonhal
+
+# 2. Eureka Server 실행
+cd eureka-server
+./gradlew bootRun
+
+# 3. Gateway Service 실행 (새 터미널)
+cd gateway-service
+./gradlew bootRun
+
+# 4. 각 마이크로서비스 실행 (새 터미널)
+cd member-service && ./gradlew bootRun
+cd feed-service && ./gradlew bootRun
+cd qna-service && ./gradlew bootRun
+# ... 나머지 서비스들
+```
+
+### Frontend 실행
+
+```bash
+cd frontend
+
+# 의존성 설치
+npm install
+
+# 개발 서버 실행
+npm run dev
+```
+
+### 테스트 실행
+
+```bash
+# Backend 테스트
+./gradlew test
+
+# Frontend 테스트
+cd frontend
+npm run test
+```
+
+---
+
+## WBS
+<img width="1168" height="1207" alt="image" src="https://github.com/user-attachments/assets/aa46a80c-6f01-4638-b03a-46e5d7227808" />
+
+
+
+
+## 📚 API 문서
+
+각 서비스는 Swagger UI를 통해 API 문서를 제공합니다.
+
+API 명세서 : [API 명세서.pdf](https://github.com/user-attachments/files/24150256/API.pdf)
+
+
+
+### 주요 API 엔드포인트
+
+#### 인증
+```
+POST /auth/signup     - 회원가입 (일반 사용자/트레이너 구분)
+POST /auth/login      - 로그인
+POST /auth/logout     - 로그아웃
+```
+
+#### 운동 계획
+```
+POST   /workoutplan              - 운동 계획 등록
+GET    /workoutplan/{date}       - 일별 계획 조회
+PATCH  /workoutplan/{planId}     - 계획 수정
+DELETE /workoutplan/{planId}     - 계획 삭제
+```
+
+#### What-if 리포트
+```
+POST /report/last-week-report           - 주간 리포트 생성
+GET  /report/all-report                 - 전체 리포트 조회
+GET  /report/search-report/{date}       - 날짜별 리포트 검색
+```
+
+#### 통계
+```
+GET /stats/user-stats                    - 개인 통계
+GET /stats/last-week-time-ranking        - 주간 운동시간 랭킹
+GET /stats/last-week-calorie-ranking     - 주간 칼로리 랭킹
+```
+
+#### Q&A
+```
+POST /question                - 질문 작성
+GET  /question/search         - 질문 검색
+POST /answer                  - 답변 등록 (트레이너)
+```
+
+---
+
+## 🧪 테스트 케이스
+
+* **Auth Service**
+    * 회원가입 및 로그인 시나리오 검증 (성공, 중복 ID, 비밀번호 불일치 등 예외 처리)
+    * JWT 발급 및 Redis Blacklist를 이용한 로그아웃 로직 검증
+* **Community Service (Feed & Question)**
+    * 게시글 및 질문의 CRUD 기능 정상 동작 확인
+    * 작성자 권한 검증 및 답변 상태 변경에 따른 수정/삭제 제약 조건 테스트
+    * 키워드 검색 및 내 질문 조회 기능 검증
+* **Data Analysis (Stats & Report)**
+    * 사용자별 주간/월간 리포트 생성 및 조회 로직 검증
+    * 날짜별 운동량 및 칼로리 소모량 랭킹 집계 정확도 테스트
+    * 통계 데이터 생성 및 날짜 기반 필터링 기능 확인
+* **etc..**
+
+## 📁 프로젝트 구조
+
+```
+woonhal/
+├── eureka-server/          # Service Discovery
+├── gateway-service/        # API Gateway
+├── member-service/         # 회원 관리
+├── feed-service/           # 소셜 피드
+├── qna-service/            # Q&A 커뮤니티
+├── stats-service/          # 운동 통계
+├── report-service/         # What-if 리포트
+├── notification-service/   # 알림
+├── dietplan-service/       # 식단 관리
+├── workoutplan-service/    # 운동 계획
+```
+
+---
+
+## 👥 개발 규칙
+
+### Code Convention
+- 패키지: 소문자 사용
+- 클래스: Upper CamelCase
+- 메서드/변수: Lower CamelCase
+- 상수: UPPER_SNAKE_CASE
+
+### Commit Convention
+```
+[feat] #이슈번호 새로운 기능 구현
+[fix] #이슈번호 버그 수정
+[refactor] #이슈번호 코드 리팩터링
+[docs] #이슈번호 문서 수정
+[test] #이슈번호 테스트 코드 작성
+[chore] #이슈번호 설정 변경
+```
+
+### Branch Strategy
+- `main`: 배포 브랜치
+- `develop`: 개발 브랜치
+- `feature/{이슈번호}-{기능명}`: 기능 개발 브랜치
+
+---
+
+## 📊 프로젝트 성과
+
+- **마이크로서비스**: 10개 독립 서비스
+- **API 엔드포인트**: 30+ RESTful API
+- **프론트엔드 페이지**: 9개 주요 페이지
+- **재사용 컴포넌트**: 15+ React 컴포넌트
+
+---
+
+## 📄 라이선스
+
+이 프로젝트는 MIT 라이선스를 따릅니다.
+
+---
+
+<div align="center">
+
+### 🏋️‍♀️ "당신의 '운동할걸…'을 '운동했다!'로 바꿔드립니다."
+
+**Made with ❤️ by Team 3**
+
 </div>
-</details>
-
-<details>
-<summary style = " font-size:1.3em;">Commit</summary>
-<div markdown="1">
-
-### 1. Commit Message Convention
-
-`[<Prefix>] #<Issue_Number> <Description>` 의 양식을 준수합니다.
-
-- **feat** : 새로운 기능 구현 `[feat] #11 구글 로그인 API 기능 구현`
-- **fix** : 코드 오류 수정 `[fix] #10 회원가입 비즈니스 로직 오류 수정`
-- **del** : 쓸모없는 코드 삭제 `[del] #12 불필요한 import 제거`
-- **docs** : README나 wiki 등의 문서 개정 `[docs] #14 리드미 수정`
-- **refactor** : 내부 로직은 변경 하지 않고 기존의 코드를 개선하는 리팩터링 `[refactor] #15 코드 로직 개선`
-- **chore** : 의존성 추가, yml 추가와 수정, 패키지 구조 변경, 파일 이동 `[chore] #21 yml 수정`, `[chore] #22 lombok 의존성 추가`
-- **test**: 테스트 코드 작성, 수정 `[test] #20 로그인 API 테스트 코드 작성`
-- **style** : 코드에 관련 없는 주석 달기, 줄바꿈
-
-</div>
-</details>
-
-<details>
-<summary style = " font-size:1.3em;">Pull Request</summary>
-<div markdown="1">
-
-### 1. Pull Request
-
-develop & main branch로 merge할 때에는 pull request가 필요합니다. pull request의 내용에는 변경된 사항에 대한 설명을 명시합니다.
-
-### 2. Pull Request Naming Rule
-
-`[<Prefix>] <Description>` 의 양식을 준수하되, prefix는 commit message convention을 따릅니다.
-
-### 3. Etc
-
-[feat] 약속 잡기 API 구현
-<br/>[chore] spring data JPA 의존성 추가
-
-</div>
-</details>
