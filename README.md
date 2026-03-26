@@ -12,7 +12,7 @@
 - GitHub: https://github.com/rlatjddms
 
 ### 김윤경
-- GitHub: https://github.com/yk5095
+- GitHub: https://github.com/kyk5095
 
 ### 이경민
 - GitHub: https://github.com/LKM1027
